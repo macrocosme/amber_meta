@@ -5,7 +5,6 @@ def pretty_print_command (command):
     c = ''
     for v in command:
         c += '%s ' % (v)
-    c += ' &'
     print ('Command:', c)
     print ()
 

@@ -1,6 +1,6 @@
 class AmberOptions:
     # Base options
-    options_base = ['debug', 'print', 'opencl_platform', 'opencl_device', 'device_name', 'sync', 'padding_file', 'zapped_channels', 'integration_steps', 'integration_file', 'compact_results', 'output', 'dms', 'dm_first', 'dm_step', 'threshold',]
+    options_base = ['print', 'opencl_platform', 'opencl_device', 'device_name', 'sync', 'padding_file', 'zapped_channels', 'integration_steps', 'integration_file', 'compact_results', 'output', 'dms', 'dm_first', 'dm_step', 'threshold',] #'debug', 
 
     # RFIm
     options_tdsc = ['rfim', 'time_domain_sigma_cut', 'time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']

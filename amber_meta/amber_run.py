@@ -244,17 +244,21 @@ def check_defaults(**kwargs):
     -------
         kwargs: key word arguments
     '''
-    if kwargs['some_key'] == None:
-        kwargs['some_key'] = ''
+    if kwargs['verbose'] == None:
+        kwargs['verbose'] = False
+
+    if kwargs['print_only'] == None:
+        kwargs['print_only'] = False
 
     return kwargs
 
 if __name__ == "__main__":
 
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('--input_dir', help="Repository of input files")
-    #
-    # args = parser.parse_args()
-    # kwargs = check_defaults(**vars(args))
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--verbose', help="Print amber commands", type=bool)
+    parser.add_argument('--print_only', help="If True, only prints amber commands. If False, also launch the jobs.", type=bool)
 
-    test_amber_run(verbose=True, print_only=False)
+    args = parser.parse_args()
+    kwargs = check_defaults(**vars(args))
+
+    test_amber_run(verbose=kwargs['verbose'], print_only=kwargs['print_only'])
