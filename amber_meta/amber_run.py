@@ -70,10 +70,6 @@ def create_amber_command(base_name='scenario_3_partitions',
                                  input_data_mode=input_data_mode,
                                  downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
 
-    print (rfim_mode, snr_mode, input_data_mode, (int(scenario_dict['downsampling'.upper()]) != 1))
-    print (amber_options.options)
-    print ()
-
     for option in amber_options.options:
         # First add the option with a dash (e.g. -opencl_platform)
         command.append('-' + option)
