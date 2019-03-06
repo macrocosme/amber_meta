@@ -1,6 +1,6 @@
 class AmberOptions:
     # Base options
-    options_base = ['print', 'opencl_platform', 'opencl_device', 'device_name', 'sync', 'padding_file', 'zapped_channels', 'integration_steps', 'integration_file', 'compact_results', 'output', 'dms', 'dm_first', 'dm_step', 'threshold',] #'debug', 
+    options_base = ['print', 'opencl_platform', 'opencl_device', 'device_name', 'sync', 'padding_file', 'zapped_channels', 'integration_steps', 'integration_file', 'compact_results', 'output', 'dms', 'dm_first', 'dm_step', 'threshold',] #'debug',
 
     # RFIm
     options_tdsc = ['rfim', 'time_domain_sigma_cut', 'time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']
@@ -19,27 +19,18 @@ class AmberOptions:
     # Subband dedispersion
     options_subband_dedispersion = ['subband_dedispersion', 'dedispersion_stepone_file', 'dedispersion_steptwo_file', 'subbands', 'subbanding_dms', 'subbanding_dm_first', 'subbanding_dm_step']
 
-    # Sigproc
+    # Input data
     options_sigproc = ['sigproc', 'stream', 'header', 'data', 'batches', 'channels', 'min_freq', 'channel_bandwidth', 'samples', 'sampling_time']
+    options_dada = ['dada', 'dada_key', 'beams', 'synthesized_beams', 'batches']
+    options_input_data = {'sigproc': options_sigproc, 'dada': options_dada}
 
-    # Gathering options into useful mixes (include downsampling)
-    options_snr_standard_tdsc = options_base + options_rfim['time_domain_sigma_cut'] + options_SNR['snr_standard'] + options_downsampling + options_sigproc + options_subband_dedispersion
-    options_snr_momad_tdsc = options_base + options_rfim['time_domain_sigma_cut'] + options_SNR['snr_momad'] + options_downsampling + options_sigproc + options_subband_dedispersion
-    options_snr_mom_sigmacut_tdsc = options_base + options_rfim['time_domain_sigma_cut'] + options_SNR['snr_mom_sigmacut'] + options_sigproc + options_downsampling + options_subband_dedispersion
-    # (no downsampling)
-    options_snr_standard_tdsc_no_downsampling = options_base + options_rfim['time_domain_sigma_cut'] + options_SNR['snr_standard'] + options_sigproc +  options_subband_dedispersion
-    options_snr_momad_tdsc_no_downsampling = options_base + options_rfim['time_domain_sigma_cut'] + options_SNR['snr_momad'] + options_sigproc + options_subband_dedispersion
-    options_snr_mom_sigmacut_tdsc_no_downsampling = options_base + options_rfim['time_domain_sigma_cut'] + options_SNR['snr_mom_sigmacut'] + options_sigproc + options_subband_dedispersion
-
-    # Meta
-    options = {
-        # with downsampling
-        'snr_standard_tdsc': options_snr_standard_tdsc,
-        'snr_momad_tdsc': options_snr_momad_tdsc,
-        'snr_mom_sigmacut_tdsc': options_snr_mom_sigmacut_tdsc,
-        # without downsampling
-        'snr_standard_tdsc_no_downsampling': options_snr_standard_tdsc_no_downsampling,
-        'snr_momad_tdsc_no_downsampling': options_snr_momad_tdsc_no_downsampling,
-        'snr_mom_sigmacut_tdsc_no_downsampling': options_snr_mom_sigmacut_tdsc_no_downsampling,
-
-    }
+    def __init__(self, rfim=True, rfim_mode='time_domain_sigma_cut', snr_mode='snr_mom_sigmacut', input_data_mode='sigproc', downsampling=False):
+        self.options = []
+        self.options += self.options_base
+        if rfim:
+            self.options += self.options_rfim[rfim_mode]
+        self.options += self.options_SNR[snr_mode]
+        self.options += self.options_input_data[input_data_mode]
+        if downsampling:
+            self.options += self.options_downsampling
+        self.options += self.options_subband_dedispersion

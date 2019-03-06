@@ -14,26 +14,32 @@ from amber_utils import (
 
 AMBER_SETUP_PATH = '/home/vohl/AMBER_setup/'
 
-def create_amber_command(amber_mode='snr_mom_sigmacut_tdsc',
-                 base_name='scenario_3_partitions',
-                 input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
-                 scenario_file='/home/vohl/software/AMBER/scenario/3_dms_partitions/12500/scenario_3_partitions_step1_12500.sh',
-                 config_path='/home/vohl/software/AMBER/install/scenario_3_partitions_step1_12500/',
-                 cpu_id=1,
-                 snrmin=10,
-                 output_dir='/home/vohl/data/',
-                 verbose=True):
+def create_amber_command(base_name='scenario_3_partitions',
+                         input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
+                         scenario_file='/home/vohl/software/AMBER/scenario/3_dms_partitions/12500/scenario_3_partitions_step1_12500.sh',
+                         config_path='/home/vohl/software/AMBER/install/scenario_3_partitions_step1_12500/',
+                         rfim=True,
+                         rfim_mode='time_domain_sigma_cut',
+                         snr_mode='snr_mom_sigmacut',
+                         input_data_mode='sigproc',
+                         cpu_id=1,
+                         snrmin=10,
+                         output_dir='/home/vohl/data/',
+                         verbose=True):
     '''Launch amber.
 
     Creates an amber launch command to be run with subprocess.
 
     Parameters
     ----------
-        amber_mode: ['snr_mom_sigmacut_tdsc']
         base_name: string
         input_file: string
         scenario_file: string
         config_path: string
+        rfim: boolean
+        rfim_mode: string
+        snr_mode: string
+        input_data_mode: string
         cpu_id: integer
         snrmin: integer
         output_dir: string
@@ -58,15 +64,17 @@ def create_amber_command(amber_mode='snr_mom_sigmacut_tdsc',
     conf_dir_base = os.environ['INSTALL_ROOT']
 
     # Pin down amber's to cpu id 'cpu_id'
-    command = ['taskset', '-c', str(cpu_id),
-                    'amber']
+    command = ['taskset', '-c', str(cpu_id), 'amber']
+    amber_options = AmberOptions(rfim_mode=rfim_mode,
+                                 snr_mode=snr_mode,
+                                 input_data_mode=input_data_mode,
+                                 downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
 
-    try:
-        scenario_dict['downsampling']
-    except:
-        amber_mode += '_no_downsampling'
-    amber_options = AmberOptions()
-    for option in amber_options.options[amber_mode]:
+    print (rfim_mode, snr_mode, input_data_mode, (int(scenario_dict['downsampling'.upper()]) != 1))
+    print (amber_options.options)
+    print ()
+
+    for option in amber_options.options:
         # First add the option with a dash (e.g. -opencl_platform)
         command.append('-' + option)
 
@@ -89,14 +97,12 @@ def create_amber_command(amber_mode='snr_mom_sigmacut_tdsc',
             command.append(input_file)
         elif option == 'output':
             command.append(
-                check_path_ends_with_slash(
-                    check_directory_exists(
-                        "%s%s%s%s" % (
-                            output_dir,
-                            base_name,
-                            '_step_',
-                            str(cpu_id+1)
-                        )
+                check_directory_exists(
+                    "%s%s%s%s" % (
+                        output_dir,
+                        base_name,
+                        '_step_',
+                        str(cpu_id+1)
                     )
                 )
             )
@@ -113,8 +119,7 @@ def create_amber_command(amber_mode='snr_mom_sigmacut_tdsc',
 
     return command
 
-def test_amber_run(amber_mode='snr_mom_sigmacut_tdsc',
-                   input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
+def test_amber_run(input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    n_cpu=3,
                    base_name='tuning_halfrate_3GPU_goodcentralfreq',
                    base_scenario_path='/home/vohl/software/AMBER/scenario/',
@@ -125,6 +130,10 @@ def test_amber_run(amber_mode='snr_mom_sigmacut_tdsc',
                         'tuning_halfrate_3GPU_goodcentralfreq_step1',
                         'tuning_halfrate_3GPU_goodcentralfreq_step2',
                         'tuning_halfrate_3GPU_goodcentralfreq_step3'],
+                   rfim=True,
+                   rfim_mode='time_domain_sigma_cut',
+                   snr_mode='snr_mom_sigmacut',
+                   input_data_mode='sigproc',
                    verbose=True,
                    print_only=False):
     '''Test amber.
@@ -142,6 +151,12 @@ def test_amber_run(amber_mode='snr_mom_sigmacut_tdsc',
         snrmin: integer
         base_config_path: string
         config_repositories: list(strings)
+        rfim: boolean
+        rfim_mode: string
+        snr_mode: string
+        input_data_mode: string
+        verbose: boolean
+        print_only: boolean
 
     Returns
     -------
@@ -149,7 +164,6 @@ def test_amber_run(amber_mode='snr_mom_sigmacut_tdsc',
     '''
     for cpu_id in range(n_cpu):
         command = create_amber_command (
-            amber_mode='snr_mom_sigmacut_tdsc',
             base_name=base_name,
             input_file=input_file,
             scenario_file='%s%s%s' % (
@@ -161,6 +175,10 @@ def test_amber_run(amber_mode='snr_mom_sigmacut_tdsc',
                 check_path_ends_with_slash(base_config_path),
                 check_path_ends_with_slash(config_repositories[cpu_id]),
             ),
+            rfim=rfim,
+            rfim_mode=rfim_mode,
+            snr_mode=snr_mode,
+            input_data_mode=input_data_mode,
             cpu_id=cpu_id,
             snrmin=snrmin
         )
@@ -231,34 +249,17 @@ def test_tune(base_scenario_path='/home/vohl/software/AMBER/scenario/tuning_half
         tune_amber(input_file, output_dir)
         i+=1
 
-def check_defaults(**kwargs):
-    '''Check for default values to be present. If not, set default values.
-
-    [Long description, optional]
-
-    Parameters
-    ----------
-        **kwargs: key word arguments
-
-    Returns
-    -------
-        kwargs: key word arguments
-    '''
-    if kwargs['verbose'] == None:
-        kwargs['verbose'] = False
-
-    if kwargs['print_only'] == None:
-        kwargs['print_only'] = False
-
-    return kwargs
-
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--verbose', help="Print amber commands", type=bool)
-    parser.add_argument('--print_only', help="If True, only prints amber commands. If False, also launch the jobs.", type=bool)
-
+    parser.add_argument('--verbose',
+                        help="Print amber commands",
+                        type=bool,
+                        default=False)
+    parser.add_argument('--print_only',
+                        help="If True, only prints amber commands. If False, also launch the jobs.",
+                        type=bool,
+                        default=True)
     args = parser.parse_args()
-    kwargs = check_defaults(**vars(args))
 
-    test_amber_run(verbose=kwargs['verbose'], print_only=kwargs['print_only'])
+    test_amber_run(verbose=args.verbose, print_only=args.print_only)
