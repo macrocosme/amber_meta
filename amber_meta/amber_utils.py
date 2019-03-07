@@ -104,6 +104,29 @@ def check_directory_exists(directory):
         os.makedirs(directory)
     return directory
 
+def parse_scenario_to_dictionary(scenario_file):
+    '''Parse an amber scenario file to a python dictionary
+
+    Accepted file extensions: [.yaml | .yml], and [.sh] as described in
+    https://github.com/AA-ALERT/AMBER_setup/blob/development/examples/scenario.sh
+
+    Parameters
+    ----------
+        scenario_file: amber scenario file (including path)
+
+    Returns
+    -------
+        scenario_dict: parsed dictionary
+    '''
+    if scenario_file.split('.')[-1] == 'sh':
+        scenario_dict = parse_sh_scenario_to_dictionary(scenario_file)
+    elif scenario_file.split('.')[-1] in ['yaml', 'yml']:
+        scenario_dict = parse_yaml_scenario_to_dictionary(scenario_file)
+    else:
+        scenario_dict = parse_sh_scenario_to_dictionary(scenario_file)
+
+    return scenario_dict
+
 def parse_sh_scenario_to_dictionary(scenario_file):
     '''Parse an amber scenario file to a python dictionary
 
@@ -142,7 +165,7 @@ def parse_yaml_scenario_to_dictionary(scenario_file, scenario_name=None):
     '''
     scenario_dict = {}
 
-    with file('document.yaml', 'r') as f:
+    with file(scenario_file, 'r') as f:
         scenario_dict = yaml.load(f)
 
     if scenario_name != None:

@@ -2,10 +2,10 @@ from __future__ import division, print_function
 import os
 import argparse
 import subprocess
-from filterbank import read_header as filterbank__read_header
-from sigproc import samples_per_file as sigproc__samples_per_file
 from amber_options import AmberOptions
 from amber_utils import (
+    get_filterbank_header,
+    get_nbatch,
     pretty_print_command,
     check_path_ends_with_slash,
     check_directory_exists,
@@ -24,7 +24,7 @@ def create_amber_command(base_name='scenario_3_partitions',
                          input_data_mode='sigproc',
                          cpu_id=1,
                          snrmin=10,
-                         output_dir='/home/vohl/data/',
+                         output_dir='/data1/vohl/results/rfim/',
                          verbose=True):
     '''Launch amber.
 
@@ -49,7 +49,10 @@ def create_amber_command(base_name='scenario_3_partitions',
         nothing.
     '''
 
-    # print ("Scenario:", scenario_file)
+    if verbose:
+        print ("Scenario:", scenario_file)
+        print ()
+
     # Get scenario
     scenario_dict = parse_scenario_to_dictionary(scenario_file)
 
@@ -57,8 +60,8 @@ def create_amber_command(base_name='scenario_3_partitions',
     config_path = check_path_ends_with_slash(config_path)
 
     # COLLECT INFO FROM FILTERBANK
-    header, header_size = filterbank__read_header(input_file)
-    nbatch = sigproc__samples_per_file(input_file, header, header_size)//1000
+    header, header_size = get_filterbank_header(input_file)
+    nbatch = get_nbatch(input_file, header, header_size)
 
     # Get amber's INSTALL_ROOT variable state
     conf_dir_base = os.environ['INSTALL_ROOT']
@@ -69,9 +72,6 @@ def create_amber_command(base_name='scenario_3_partitions',
                                  snr_mode=snr_mode,
                                  input_data_mode=input_data_mode,
                                  downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
-
-    if verbose:
-        print (rfim_mode, snr_mode, input_data_mode, (int(scenario_dict['downsampling'.upper()]) != 1))
 
     for option in amber_options.options:
         # First add the option with a dash (e.g. -opencl_platform)
@@ -86,6 +86,8 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(config_path + 'tdsc.conf')
         elif option == 'downsampling_configuration':
             command.append(config_path + 'downsampling.conf')
+        elif option == 'downsampling_factor':
+            command.append(scenario_dict['INTEGRATION_STEPS'])
         elif option == 'integration_steps':
             command.append(config_path + 'integration_steps.conf')
         elif option == 'zapped_channels':
@@ -94,8 +96,6 @@ def create_amber_command(base_name='scenario_3_partitions',
 	        command.append(str(snrmin))
         elif option == 'data':
             command.append(input_file)
-        elif option == 'downsampling_factor':
-            command.append(scenario_dict['INTEGRATION_STEPS'])
         elif option == 'output':
             command.append(
                 check_directory_exists(
@@ -119,6 +119,41 @@ def create_amber_command(base_name='scenario_3_partitions',
                 pass
 
     return command
+
+def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_only=True):
+    assert input_file.split('.')[-1] in ['yaml', 'yml']
+    base = parse_scenario_to_dictionary(input_file)[root]
+
+    if verbose:
+        print (base)
+
+    for cpu_id in range(base['n_cpu']):
+        command = create_amber_command (
+            base_name=base['base_name'],
+            input_file=base['input_file'],
+            scenario_file='%s%s%s' % (
+               check_path_ends_with_slash(base['base_scenario_path']),
+               check_path_ends_with_slash(base['base_name']),
+               base['scenario_files'][cpu_id],
+            ),
+            config_path='%s%s' % (
+                check_path_ends_with_slash(base['base_config_path']),
+                check_path_ends_with_slash(base['config_repositories'][cpu_id]),
+            ),
+            rfim=base['rfim'],
+            rfim_mode=base['rfim_mode'],
+            snr_mode=base['snr_mode'],
+            input_data_mode=base['input_data_mode'],
+            cpu_id=cpu_id,
+            snrmin=base['snrmin']
+        )
+
+        if verbose:
+            pretty_print_command(command)
+
+        if not print_only:
+            # Launch amber, and detach from the process so it runs by itself
+            subprocess.Popen(command, preexec_fn=os.setpgrp)
 
 def test_amber_run(input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    n_cpu=3,
