@@ -1,8 +1,69 @@
 from __future__ import division, print_function
 import os
 import yaml
+from filterbank import read_header as filterbank__read_header
+from sigproc import samples_per_file as sigproc__samples_per_file
+
+def get_max_dm(scenario_dict):
+    '''Check if directory (string) ends with a slash.
+
+    If directory does not end with a slash, add one at the end.
+
+    Parameters
+    ----------
+        directory: string
+
+    Returns
+    -------
+        directory: string
+    '''
+    return scenario_dict['SUBBANDING_DM_FIRST'] + \
+           scenario_dict['SUBBANDING_DM_STEP'] * scenario_dict['SUBBANDING_DMS']
+
+def get_filterbank_header(input_file):
+    '''Get header and header_size from filterbank
+
+    Parameters
+    ----------
+        input_file: string
+
+    Returns
+    -------
+        header: filterbank.read_header.header (dict)
+        header_size: filterbank.read_header.header_size (int)
+    '''
+    header, header_size = filterbank__read_header(input_file)
+    return header, header_size
+
+def get_nbatch(input_file, header, header_size):
+    '''Get number of batches (nbatch) available in filterbank
+
+    Parameters
+    ----------
+        input_file: string
+        header: filterbank.read_header.header (dict)
+        header_size: filterbank.read_header.header_size (int)
+
+    Returns
+    -------
+        nbatch: int
+    '''
+    nbatch = sigproc__samples_per_file(input_file, header, header_size)//1000
+    return nbatch
 
 def pretty_print_command (command):
+    '''Pretty print an amber command.
+
+    Prints each element of the 'command' list as a string.
+
+    Parameters
+    ----------
+        command: list
+
+    Returns
+    -------
+        Nothing
+    '''
     c = ''
     for v in command:
         c += '%s ' % (v)
