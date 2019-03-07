@@ -13,8 +13,7 @@ import numpy as np
 from pandas import read_csv
 
 '''
-Simple handy functionalities to manipulate and deal with data
-from your python code.
+Simple handy functionalities to manipulate and deal with data.
 
 author: Dany Vohl, 2016.
 '''
