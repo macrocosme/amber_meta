@@ -1,3 +1,6 @@
 sigproc
 filterbank
 yaml
+matplotlib
+pandas
+seaborn
