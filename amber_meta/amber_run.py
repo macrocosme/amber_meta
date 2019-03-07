@@ -70,6 +70,9 @@ def create_amber_command(base_name='scenario_3_partitions',
                                  input_data_mode=input_data_mode,
                                  downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
 
+    if verbose:
+        print (rfim_mode, snr_mode, input_data_mode, (int(scenario_dict['downsampling'.upper()]) != 1))
+
     for option in amber_options.options:
         # First add the option with a dash (e.g. -opencl_platform)
         command.append('-' + option)
@@ -91,6 +94,8 @@ def create_amber_command(base_name='scenario_3_partitions',
 	        command.append(str(snrmin))
         elif option == 'data':
             command.append(input_file)
+        elif option == 'downsampling_factor':
+            command.append(scenario_dict['INTEGRATION_STEPS'])
         elif option == 'output':
             command.append(
                 check_directory_exists(
@@ -251,11 +256,11 @@ if __name__ == "__main__":
     parser.add_argument('--verbose',
                         help="Print amber commands",
                         type=bool,
-                        default=False)
+                        default=True)
     parser.add_argument('--print_only',
                         help="If True, only prints amber commands. If False, also launch the jobs.",
                         type=bool,
-                        default=True)
+                        default=False)
     args = parser.parse_args()
 
     test_amber_run(verbose=args.verbose, print_only=args.print_only)
