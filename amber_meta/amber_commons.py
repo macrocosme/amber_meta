@@ -2,7 +2,7 @@ import os
 import sys
 from os import path, listdir, walk
 from os.path import isfile, join
-# from itertools import izip
+from itertools import izip # implies python 2.7
 import fileinput
 import csv
 
@@ -40,10 +40,10 @@ def find_replace(filename, text_to_search,text_to_replace):
 def get_Files(path):
     return [ f for f in listdir(path) if isfile(join(path,f)) ]
 
-# def flip_CSV(file):
-#     """ flips a CSV file within itself (similar to a transpose) """
-#     a = izip(*csv.reader(open(file, "rb")))
-#     csv.writer(open(file, "wb")).writerows(a)
+def flip_CSV(file):
+    """ flips a CSV file within itself (similar to a transpose) """
+    a = izip(*csv.reader(open(file, "rb")))
+    csv.writer(open(file, "wb")).writerows(a)
 
 def create_cube_from_files_in_current_folder(out_fname):
     """
