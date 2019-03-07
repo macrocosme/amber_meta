@@ -3,6 +3,8 @@ import os
 import yaml
 from filterbank import read_header as filterbank__read_header
 from sigproc import samples_per_file as sigproc__samples_per_file
+from os import path, listdir, walk
+from os.path import isfile, join
 
 def get_max_dm(scenario_dict):
     '''Check if directory (string) ends with a slash.
@@ -103,6 +105,22 @@ def check_directory_exists(directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
     return directory
+
+def list_files_with_paths_recursively(my_path):
+    """ Recursively list files in my_path and returns the list in the form of ['path/to/file/myfile.extension', '...'] """
+    my_files = []
+    for (dirpath, dirnames, filenames) in walk(my_path):
+        if dirpath[-1] != '/':
+            for f in filenames:
+                my_files.append(dirpath + '/' + f)
+    return my_files
+
+def list_files_in_current_path(path):
+    """ Returns files in the current folder only """
+    return [ f for f in listdir(path) if isfile(join(path,f)) ]
+
+def get_Files(path):
+    return [ f for f in listdir(path) if isfile(join(path,f)) ]
 
 def parse_scenario_to_dictionary(scenario_file):
     '''Parse an amber scenario file to a python dictionary
