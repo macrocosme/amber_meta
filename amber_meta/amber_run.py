@@ -11,6 +11,7 @@ from amber_utils import (
     check_directory_exists,
     parse_scenario_to_dictionary
 )
+from amber_results import read_amber_run_results
 
 AMBER_SETUP_PATH = '/home/vohl/AMBER_setup/'
 
@@ -226,6 +227,16 @@ def test_amber_run(input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfr
         if not print_only:
             # Launch amber, and detach from the process so it runs by itself
             subprocess.Popen(command, preexec_fn=os.setpgrp)
+
+def get_amber_run_results_from_root_yaml(input_file, root='subband', verbose=False):
+    assert input_file.split('.')[-1] in ['yaml', 'yml']
+    base = parse_scenario_to_dictionary(input_file)[root]
+
+    if verbose:
+        print (base)
+
+    return read_amber_run_results(base['output_dir'], verbose=verbose)
+
 
 def tune_amber(scenario_file='/home/vohl/software/AMBER/scenario/tuning_halfrate_3GPU_goodcentralfreq/tuning_1.sh',
                config_path='/home/vohl/software/AMBER/configuration/tuning_halfrate_3GPU_goodcentralfreq_step1'):
