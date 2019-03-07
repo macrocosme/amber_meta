@@ -145,7 +145,8 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
             snr_mode=base['snr_mode'],
             input_data_mode=base['input_data_mode'],
             cpu_id=cpu_id,
-            snrmin=base['snrmin']
+            snrmin=base['snrmin'],
+            output_dir=base['output_dir']
         )
 
         if verbose:
