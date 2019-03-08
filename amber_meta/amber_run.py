@@ -71,7 +71,8 @@ def create_amber_command(base_name='scenario_3_partitions',
 
     # Pin down amber's to cpu id 'cpu_id'
     command = ['taskset', '-c', str(cpu_id), 'amber']
-    amber_options = AmberOptions(rfim_mode=rfim_mode,
+    amber_options = AmberOptions(rfim=rfim,
+				 rfim_mode=rfim_mode,
                                  snr_mode=snr_mode,
                                  input_data_mode=input_data_mode,
                                  downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
