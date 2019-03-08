@@ -137,7 +137,8 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
     base = parse_scenario_to_dictionary(input_file)[root]
 
     root_name = input_file.split('.')[0].split('/')[-1]
-    print (root_name)
+    if verbose:
+        print ('ROOT_NAME', root_name)
 
     if verbose:
         print (base)
