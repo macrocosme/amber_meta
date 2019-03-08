@@ -19,7 +19,9 @@ import amber_plot as ap
 
 # Run amber using root scenario yaml file
 '''
-The amber job will run independently. The following steps currently involves that these jobs have terminated and their .trigger outputs be available.
+The amber job will run independently. The following steps currently 
+involves that these jobs have terminated and their .trigger outputs 
+be available.
 '''
 imput_file = '../yaml/root/root.yaml'
 ar.run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_only=True) # Print only will not launch the amber job. When False, the command will be run via subprocess.
