@@ -112,11 +112,11 @@ def create_amber_command(base_name='scenario_3_partitions',
                                 check_path_ends_with_slash(output_dir),
                                 root_name if root_name != None else base_name,
                             )
-                        ),
-                        root_name if root_name != None else base_name,
-                        '_step_',
-                        str(cpu_id+1)
-                    )
+                        )
+                    ),
+                    root_name if root_name != None else base_name,
+                    '_step_',
+                    str(cpu_id+1)
                 )
             )
         elif option == 'header':
