@@ -22,7 +22,7 @@ def get_max_dm(scenario_dict):
     return scenario_dict['SUBBANDING_DM_FIRST'] + \
            scenario_dict['SUBBANDING_DM_STEP'] * scenario_dict['SUBBANDING_DMS']
 
-def get_filterbank_header(input_file):
+def get_filterbank_header(input_file, verbose=False):
     '''Get header and header_size from filterbank
 
     Parameters
@@ -35,9 +35,13 @@ def get_filterbank_header(input_file):
         header_size: filterbank.read_header.header_size (int)
     '''
     header, header_size = filterbank__read_header(input_file)
+    if verbose:
+        print ('header', header)
+        print ('header_size', header_size)
+        print ()
     return header, header_size
 
-def get_nbatch(input_file, header, header_size):
+def get_nbatch(input_file, header, header_size, samples, verbose=False):
     '''Get number of batches (nbatch) available in filterbank
 
     Parameters
@@ -50,7 +54,11 @@ def get_nbatch(input_file, header, header_size):
     -------
         nbatch: int
     '''
-    nbatch = sigproc__samples_per_file(input_file, header, header_size)//1000
+    if verbose:
+        print ('NBATCH:', sigproc__samples_per_file(input_file, header, header_size)//samples)
+        print ()
+
+    nbatch = sigproc__samples_per_file(input_file, header, header_size)//samples
     return nbatch
 
 def pretty_print_command (command):

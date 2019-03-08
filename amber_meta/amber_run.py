@@ -63,8 +63,8 @@ def create_amber_command(base_name='scenario_3_partitions',
     config_path = check_path_ends_with_slash(config_path)
 
     # COLLECT INFO FROM FILTERBANK
-    header, header_size = get_filterbank_header(input_file)
-    nbatch = get_nbatch(input_file, header, header_size)
+    header, header_size = get_filterbank_header(input_file, verbose=verbose)
+    nbatch = get_nbatch(input_file, header, header_size, int(scenario_dict['SAMPLES']), verbose=verbose)
 
     # Get amber's INSTALL_ROOT variable state
     conf_dir_base = os.environ['INSTALL_ROOT']
@@ -72,7 +72,7 @@ def create_amber_command(base_name='scenario_3_partitions',
     # Pin down amber's to cpu id 'cpu_id'
     command = ['taskset', '-c', str(cpu_id), 'amber']
     amber_options = AmberOptions(rfim=rfim,
-				 rfim_mode=rfim_mode,
+				                 rfim_mode=rfim_mode,
                                  snr_mode=snr_mode,
                                  input_data_mode=input_data_mode,
                                  downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
