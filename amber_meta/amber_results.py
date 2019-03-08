@@ -27,22 +27,23 @@ def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
 
     # Go through output files
     for file in get_Files(run_output_dir)[1:]:
-        if verbose:
-            print (file)
+        if '.trigger' in file:
+            if verbose:
+                print (file)
 
-        # Append .trigger files to pandas' dataframe
-        df.append(
-            pandas__read_csv(
-                # path/to/file.trigger
-                "%s%s" % (
-                    check_path_ends_with_slash(run_output_dir),
-                    file
+            # Append .trigger files to pandas' dataframe
+            df.append(
+                pandas__read_csv(
+                    # path/to/file.trigger
+                    "%s%s" % (
+                        check_path_ends_with_slash(run_output_dir),
+                        file
+                    ),
+                    sep=sep,
+                    names=header,
+                    skiprows=1
                 ),
-                sep=sep,
-                names=header,
-                skiprows=1
-            ),
-            ignore_index=True
-        )
+                ignore_index=True
+            )
 
     return df
