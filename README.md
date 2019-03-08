@@ -24,11 +24,23 @@ involves that these jobs have terminated and their .trigger outputs
 be available.
 '''
 imput_file = '../yaml/root/root.yaml'
-ar.run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_only=True) # Print only will not launch the amber job. When False, the command will be run via subprocess.
+ar.run_amber_from_yaml_root(
+  input_file, 
+  root='subband', 
+  verbose=False, 
+  print_only=True
+) # Print only will not launch the amber job. When False, the command will be run via subprocess.
 
 # Read .trigger file to pandas' dataframe
-df = ar.get_amber_run_results_from_root_yaml(input_file, root='subband', verbose=False)
+df = ar.get_amber_run_results_from_root_yaml(
+  input_file, 
+  root='subband', 
+  verbose=False
+)
 
 # Make pair plot from output
-pairplot(df, output_name='../pairplot.pdf')
+pairplot(
+  df, 
+  output_name='../pairplot.pdf'
+)
 ```
