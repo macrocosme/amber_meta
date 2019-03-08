@@ -107,14 +107,16 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(
                 "%s%s%s%s" % (
                     check_directory_exists(
-                        check_path_ends_with_slash('%s%s' % (
-                            check_path_ends_with_slash(output_dir),
-                            root_name if root_name != None else base_name,
-                        )
-                    ),
-                    root_name if root_name != None else base_name,
-                    '_step_',
-                    str(cpu_id+1)
+                        check_path_ends_with_slash(
+                            '%s%s' % (
+                                check_path_ends_with_slash(output_dir),
+                                root_name if root_name != None else base_name,
+                            )
+                        ),
+                        root_name if root_name != None else base_name,
+                        '_step_',
+                        str(cpu_id+1)
+                    )
                 )
             )
         elif option == 'header':
