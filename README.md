@@ -11,7 +11,7 @@ the terms of the GNU GPL v3+ license.
 
 The most basic usage is via `python amber_run.py`, and parameters that will be prompted. 
 
-Else, more advance usage involves function not yet added to amber_runs's main. In an ipython session: 
+Else, more advanced usage involves function not yet added to amber_runs's main. In an ipython session: 
 
 ```python
 import amber_run as ar
