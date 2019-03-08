@@ -62,4 +62,4 @@ distribute-*.tar.gz
 yaml/*
 yml/*
 
-*.pdf
+figures/*
