@@ -94,7 +94,7 @@ def create_amber_command(base_name='scenario_3_partitions',
         elif option == 'downsampling_configuration':
             command.append(config_path + 'downsampling.conf')
         elif option == 'downsampling_factor':
-            command.append(scenario_dict['INTEGRATION_STEPS'])
+            command.append(scenario_dict['DOWNSAMPLING'])
         elif option == 'integration_steps':
             command.append(config_path + 'integration_steps.conf')
         elif option == 'zapped_channels':
