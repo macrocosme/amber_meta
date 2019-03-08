@@ -61,3 +61,5 @@ distribute-*.tar.gz
 
 yaml/*
 yml/*
+
+*.pdf
