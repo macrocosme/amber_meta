@@ -26,7 +26,8 @@ def create_amber_command(base_name='scenario_3_partitions',
                          cpu_id=1,
                          snrmin=10,
                          output_dir='/data1/vohl/results/rfim/',
-                         verbose=True):
+                         verbose=True,
+                         root_name=None):
     '''Launch amber.
 
     Creates an amber launch command to be run with subprocess.
@@ -44,6 +45,7 @@ def create_amber_command(base_name='scenario_3_partitions',
         cpu_id: integer
         snrmin: integer
         output_dir: string
+        root_name: string
 
     Returns
     -------
@@ -74,6 +76,9 @@ def create_amber_command(base_name='scenario_3_partitions',
                                  input_data_mode=input_data_mode,
                                  downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
 
+    # Check that output directory exists. If not, create it.
+    check_directory_exists(output_dir)
+
     for option in amber_options.options:
         # First add the option with a dash (e.g. -opencl_platform)
         command.append('-' + option)
@@ -99,13 +104,11 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(input_file)
         elif option == 'output':
             command.append(
-                check_directory_exists(
-                    "%s%s%s%s" % (
-                        output_dir,
-                        base_name,
-                        '_step_',
-                        str(cpu_id+1)
-                    )
+                "%s%s%s%s" % (
+                    output_dir,
+                    root_name if root_name != None else base_name,
+                    '_step_',
+                    str(cpu_id+1)
                 )
             )
         elif option == 'header':
@@ -124,6 +127,9 @@ def create_amber_command(base_name='scenario_3_partitions',
 def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_only=True):
     assert input_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_file)[root]
+
+    root_name = input_file.split('.')[0].split('/')[-1]
+    print (root_name)
 
     if verbose:
         print (base)
@@ -147,7 +153,8 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
             input_data_mode=base['input_data_mode'],
             cpu_id=cpu_id,
             snrmin=base['snrmin'],
-            output_dir=base['output_dir']
+            output_dir=base['output_dir'],
+            root_name=root_name
         )
 
         if verbose:
