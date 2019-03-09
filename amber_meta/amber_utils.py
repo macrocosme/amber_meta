@@ -28,11 +28,11 @@ def get_max_dm(scenario_dict):
 
     Parameters
     ----------
-        directory: string
+    directory: string
 
     Returns
     -------
-        directory: string
+    directory: string
     """
     return scenario_dict['SUBBANDING_DM_FIRST'] + \
            scenario_dict['SUBBANDING_DM_STEP'] * scenario_dict['SUBBANDING_DMS']
@@ -42,12 +42,12 @@ def get_filterbank_header(input_file, verbose=False):
 
     Parameters
     ----------
-        input_file: string
+    input_file: string
 
     Returns
     -------
-        header: filterbank.read_header.header (dict)
-        header_size: filterbank.read_header.header_size (int)
+    header: filterbank.read_header.header (dict)
+    header_size: filterbank.read_header.header_size (int)
     """
     header, header_size = filterbank__read_header(input_file)
     if verbose:
@@ -61,13 +61,13 @@ def get_nbatch(input_file, header, header_size, samples, verbose=False):
 
     Parameters
     ----------
-        input_file: string
-        header: filterbank.read_header.header (dict)
-        header_size: filterbank.read_header.header_size (int)
+    input_file: string
+    header: filterbank.read_header.header (dict)
+    header_size: filterbank.read_header.header_size (int)
 
     Returns
     -------
-        nbatch: int
+    nbatch: int
     """
     if verbose:
         print ('NBATCH:', sigproc__samples_per_file(input_file, header, header_size)//samples)
@@ -83,11 +83,7 @@ def pretty_print_command (command):
 
     Parameters
     ----------
-        command: list
-
-    Returns
-    -------
-        Nothing
+    command: list
     """
     c = ''
     for v in command:
@@ -102,11 +98,11 @@ def check_path_ends_with_slash(path):
 
     Parameters
     ----------
-        directory: string
+    directory: string
 
     Returns
     -------
-        directory: string
+    directory: string
     """
     if path[-1] != '/':
         path = path + '/'
@@ -119,18 +115,26 @@ def check_directory_exists(directory):
 
     Parameters
     ----------
-        directory: string
+    directory: string
 
     Returns
     -------
-        directory: string
+    directory: string
     """
     if not os.path.exists(directory):
         os.makedirs(directory)
     return directory
 
 def list_files_with_paths_recursively(my_path):
-    """ Recursively list files in my_path and returns the list in the form of ['path/to/file/myfile.extension', '...'] """
+    """Recursively list files in my_path
+
+    Recursively list files in my_path and returns the list in
+    the form of ['path/to/file/myfile.extension', '...']
+
+    Parameters
+    ----------
+    my_path: string
+    """
     my_files = []
     for (dirpath, dirnames, filenames) in walk(my_path):
         if dirpath[-1] != '/':
@@ -139,10 +143,29 @@ def list_files_with_paths_recursively(my_path):
     return my_files
 
 def list_files_in_current_path(path):
-    """ Returns files in the current folder only """
+    """Returns files in the current folder only
+
+    Parameters
+    ----------
+    path: string
+
+    Returns
+    -------
+    files: list
+    """
     return [ f for f in listdir(path) if isfile(join(path,f)) ]
 
 def get_Files(path):
+    """Returns files in the current folder only
+
+    Parameters
+    ----------
+    path: string
+
+    Returns
+    -------
+    files: list
+    """
     return [ f for f in listdir(path) if isfile(join(path,f)) ]
 
 def parse_scenario_to_dictionary(scenario_file):
@@ -153,11 +176,11 @@ def parse_scenario_to_dictionary(scenario_file):
 
     Parameters
     ----------
-        scenario_file: amber scenario file (including path)
+    scenario_file: amber scenario file (including path)
 
     Returns
     -------
-        scenario_dict: parsed dictionary
+    scenario_dict: parsed dictionary
     """
     if scenario_file.split('.')[-1] == 'sh':
         scenario_dict = parse_sh_scenario_to_dictionary(scenario_file)
@@ -179,11 +202,11 @@ def parse_sh_scenario_to_dictionary(scenario_file):
 
     Parameters
     ----------
-        scenario_file: amber scenario file (including path)
+    scenario_file: amber scenario file (including path)
 
     Returns
     -------
-        scenario_dict: parsed dictionary
+    scenario_dict: parsed dictionary
     """
     scenario_dict = {}
     with open(scenario_file, 'r') as f:
@@ -198,11 +221,11 @@ def parse_yaml_scenario_to_dictionary(scenario_file, scenario_name=None):
 
     Parameters
     ----------
-        scenario_file: amber scenario file in yaml format (including path)
+    scenario_file: amber scenario file in yaml format (including path)
 
     Returns
     -------
-        scenario_dict: parsed dictionary
+    scenario_dict: parsed dictionary
     """
     scenario_dict = {}
 
