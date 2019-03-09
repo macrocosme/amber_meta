@@ -2,8 +2,8 @@ from __future__ import division, print_function
 import os
 import argparse
 import subprocess
-from amber_options import AmberOptions
-from amber_utils import (
+from .amber_options import AmberOptions
+from .amber_utils import (
     get_full_output_path_and_file,
     get_filterbank_header,
     get_nbatch,
@@ -12,7 +12,7 @@ from amber_utils import (
     check_directory_exists,
     parse_scenario_to_dictionary
 )
-from amber_results import read_amber_run_results
+from .amber_results import read_amber_run_results
 
 AMBER_SETUP_PATH = '/home/vohl/AMBER_setup/'
 

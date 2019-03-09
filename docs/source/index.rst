@@ -16,5 +16,7 @@ This project is Copyright (c) D. Vohl and licensed under the terms of the `GNU G
 
    about
 
+Module docs
+-----------
+
 .. automodule:: amber_meta
-   :members:

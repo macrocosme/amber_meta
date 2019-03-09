@@ -59,6 +59,9 @@ distribute-*.tar.gz
 # Mac OSX
 .DS_Store
 
+# Sphinx
+.ropeproject
+
 yaml/*
 yml/*
 

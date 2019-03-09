@@ -1,8 +1,11 @@
 from __future__ import division, print_function
 import os
 import yaml
-from filterbank import read_header as filterbank__read_header
-from sigproc import samples_per_file as sigproc__samples_per_file
+try:
+    from filterbank import read_header as filterbank__read_header
+    from sigproc import samples_per_file as sigproc__samples_per_file
+except:
+    pass
 from os import path, listdir, walk
 from os.path import isfile, join
 

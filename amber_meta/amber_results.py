@@ -1,5 +1,8 @@
 from pandas import read_csv as pandas__read_csv
-from amber_utils import get_Files, check_path_ends_with_slash
+from .amber_utils import (
+    get_Files,
+    check_path_ends_with_slash
+)
 
 def get_header(filename, sep=' '):
     with open(filename, 'r') as f:
