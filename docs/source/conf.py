@@ -14,7 +14,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('.'), os.path.abspath('../amber_meta'))
+sys.path.insert(0, os.path.abspath('.'), os.path.abspath('./../amber_meta'))
 
 # -- Project information -----------------------------------------------------
 
