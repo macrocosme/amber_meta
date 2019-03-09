@@ -133,6 +133,19 @@ def create_amber_command(base_name='scenario_3_partitions',
     return command
 
 def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_only=True):
+    '''Run amber starting from a yaml root scenario file.
+
+    Launches a amber scenario where each step is run as independent sub-processes.
+
+    Parameters
+    ----------
+        input_file: string: (.yaml | .yml] 
+	root: string: (Name of root scenario in input yaml.)
+	verbose: Boolean
+    Returns
+    -------
+        nothing.
+    '''
     assert input_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_file)[root]
 
