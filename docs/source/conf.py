@@ -101,7 +101,7 @@ html_theme_options = {
     'display_version': False,
 }
 
-html_show_copyright = False
+html_show_copyright = True
 html_show_sphinx = False
 
 # Theme options are theme-specific and customize the look and feel of a theme
