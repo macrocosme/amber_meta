@@ -14,8 +14,8 @@ The most basic usage is via `python amber_run.py`, and parameters that will be p
 Else, more advanced usage involves function not yet added to amber_runs's main. In an ipython session: 
 
 ```python
-import amber_run as ar
-import amber_plot as ap
+import amber_meta.amber_run as ar
+import amber_meta.amber_plot as ap
 
 # Run amber using root scenario yaml file
 '''
