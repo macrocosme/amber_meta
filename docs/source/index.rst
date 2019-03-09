@@ -8,12 +8,6 @@ Documentation for amber_meta
 
 This repository integrates a few routines to launch `amber <http://github.com/AA-ALERT/AMBER_setup>`_ in a systematic manner.
 
-License
--------
-
-This project is Copyright (c) D. Vohl and licensed under
-the terms of the GNU GPL v3+ license.
-
 Usage
 -----
 
@@ -57,6 +51,11 @@ Else, more advanced usage involves function not yet added to amber_runs's main. 
       df,
       output_name='../pairplot.pdf'
     )
+
+License
+-------
+
+   This project is licensed under the terms of the GNU GPL v3+ license.
 
 .. toctree::
    :maxdepth: 2
