@@ -6,5 +6,5 @@
 amber_options
 =============
 
-.. automodule:: amber_meta.amber_options
+.. autoclass:: amber_meta.amber_options.AmberOptions
    :members:
