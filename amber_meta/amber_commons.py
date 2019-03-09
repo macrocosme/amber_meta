@@ -12,11 +12,11 @@ import numpy as np
 
 from pandas import read_csv
 
-'''
+"""
 Simple handy functionalities to manipulate and deal with data.
 
 author: Dany Vohl, 2016.
-'''
+"""
 
 def list_files_with_paths_recursively(my_path):
     """ Recursively list files in my_path and returns the list in the form of ['path/to/file/myfile.extension', '...'] """
