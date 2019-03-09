@@ -1,3 +1,5 @@
+[![Documentation Status](https://readthedocs.org/projects/amber-meta/badge/?version=latest)](https://amber-meta.readthedocs.io/en/latest/?badge=latest)
+
 # amber_meta
 
 This repository integrates a few routines to launch [amber](http://github.com/AA-ALERT/AMBER_setup) in a systematic manner.
