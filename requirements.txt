@@ -1,5 +1,6 @@
-sigproc
-filterbank
+# sigproc and filterbank can't simply be pip installed
+#sigproc  
+#filterbank
 yaml
 matplotlib
 pandas
