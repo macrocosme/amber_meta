@@ -5,3 +5,4 @@ PyYAML
 matplotlib
 pandas
 seaborn
+sphinx_automodapi
