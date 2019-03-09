@@ -19,7 +19,7 @@ import amber_plot as ap
 
 # Run amber using root scenario yaml file
 '''
-The amber job will run independently. The following steps currently 
+The amber job(s) will run independently. The following steps currently 
 involves that these jobs have terminated and their .trigger outputs 
 be available.
 '''
