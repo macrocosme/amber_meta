@@ -23,7 +23,7 @@ The amber job(s) will run independently. The following steps currently
 involves that these jobs have terminated and their .trigger outputs 
 be available.
 '''
-imput_file = '../yaml/root/root.yaml'
+imput_file = 'yaml/root/root.yaml'
 ar.run_amber_from_yaml_root(
   input_file, 
   root='subband', 
