@@ -112,7 +112,12 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(input_file)
         elif option == 'output':
             command.append(
-                get_full_output_path_and_file(output_dir, base_name, root_name=root_name)
+                get_full_output_path_and_file(
+                    output_dir,
+                    base_name,
+                    root_name=root_name,
+                    cpu_id=cpu_id
+                    )
             )
         elif option == 'header':
             command.append(str(header_size))
