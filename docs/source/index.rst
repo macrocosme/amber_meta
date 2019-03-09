@@ -8,17 +8,20 @@ Documentation for amber_meta
 
 This repository integrates a few routines to launch `amber <http://github.com/AA-ALERT/AMBER_setup>`_ in a systematic manner.
 
+Getting the code
+----------------
+
+.. code-block:: shell
+
+    git clone https://github.com/macrocosme/amber_meta.git
+    cd amber_meta/
+
 Usage
 -----
 
 The most basic usage is via `python amber_run.py`, and parameters that will be prompted.
 
 Else, more advanced usage involves function not yet added to amber_runs's main. In an ipython session:
-
-.. code-block:: shell
-
-    git clone https://github.com/macrocosme/amber_meta.git
-    cd amber_meta/
 
 .. code-block:: python
 
