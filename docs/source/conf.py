@@ -95,6 +95,15 @@ html_theme_options = {
     'github_repo': 'amber_meta',
 }
 
+html_logo = '_static/amber_meta.png'
+html_theme_options = {
+    'logo_only': True,
+    'display_version': False,
+}
+
+html_show_copyright = False
+html_show_sphinx = False
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
@@ -121,7 +130,8 @@ html_static_path = ['_static']
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'amber_metadoc'
-
+html_use_smartypants = False
+smartquotes = False
 
 # -- Options for LaTeX output ------------------------------------------------
 
