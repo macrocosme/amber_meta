@@ -45,17 +45,17 @@ def create_amber_command(base_name='scenario_3_partitions',
     Creates an amber launch command to be run with subprocess.
 
     Args:
-        base_name(string): 
-        input_file(string): 
-        scenario_file(string): 
-        config_path(string): 
+        base_name(string):
+        input_file(string):
+        scenario_file(string):
+        config_path(string):
         rfim: boolean
-        rfim_mode(string): 
-        snr_mode(string): 
-        input_data_mode(string): 
-        cpu_id(integer): 
-        snrmin(integer): 
-        output_dir(string): 
+        rfim_mode(string):
+        snr_mode(string):
+        input_data_mode(string):
+        cpu_id(integer):
+        snrmin(integer):
+        output_dir(string):
         root_name(string):
     """
 
@@ -112,7 +112,7 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(input_file)
         elif option == 'output':
             command.append(
-                get_full_output_path_and_file(output_dir, base_name, root_name=None)
+                get_full_output_path_and_file(output_dir, base_name, root_name=root_name)
             )
         elif option == 'header':
             command.append(str(header_size))
@@ -202,19 +202,19 @@ def test_amber_run(input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfr
     Creates three amber jobs.
 
     Args:
-        amber_mode(string): 
-        input_file(string): 
-        n_cpu(integer): 
-        base_name(string): 
-        base_scenario_path(string): 
+        amber_mode(string):
+        input_file(string):
+        n_cpu(integer):
+        base_name(string):
+        base_scenario_path(string):
         scenario_files: list(strings)
-        snrmin(integer): 
-        base_config_path(string): 
+        snrmin(integer):
+        base_config_path(string):
         config_repositories: list(strings)
         rfim: boolean
-        rfim_mode(string): 
-        snr_mode(string): 
-        input_data_mode(string): 
+        rfim_mode(string):
+        snr_mode(string):
+        input_data_mode(string):
         verbose: boolean
         print_only: boolean
     """
@@ -273,7 +273,7 @@ def tune_amber(scenario_file='/home/vohl/software/AMBER/scenario/tuning_halfrate
     Tune amber based on a scenario file. The output is save to config_path.
 
     Args:
-        scenario_file(string): 
+        scenario_file(string):
         config_path(string):
     """
     # Format input to correspond to behaviour we want
@@ -296,10 +296,10 @@ def test_tune(base_scenario_path='/home/vohl/software/AMBER/scenario/tuning_half
     Launch tune_amber for three scenarios.
 
     Args:
-        base_scenario_path(string): 
-        base_name(string): 
+        base_scenario_path(string):
+        base_name(string):
         scenario_files(list):
-        config_path(string): 
+        config_path(string):
     """
 
     base_scenario_path = check_path_ends_with_slash(base_scenario_path)
