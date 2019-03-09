@@ -1,3 +1,13 @@
+"""
+.. module:: amber_options
+   :platform: Unix, Windows
+   :synopsis: Module to run amber
+
+.. moduleauthor:: D. Vohl <vohl@astron.nl>
+
+
+"""
+
 class AmberOptions:
     # Base options
     options_base = ['print', 'opencl_platform', 'opencl_device', 'device_name', 'sync', 'padding_file', 'zapped_channels', 'integration_steps', 'integration_file', 'compact_results', 'output', 'dms', 'dm_first', 'dm_step', 'threshold',] #'debug',

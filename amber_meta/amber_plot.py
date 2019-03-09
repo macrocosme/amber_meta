@@ -3,6 +3,16 @@ from pandas.plotting import scatter_matrix
 import seaborn as sns
 sns.set(style="ticks")
 
+"""
+.. module:: amber_plot
+   :platform: Unix, Windows
+   :synopsis: Module to plot single radio pulse results
+
+.. moduleauthor:: D. Vohl <vohl@astron.nl>
+
+
+"""
+
 def plot(df, column1='DM', column2='SNR', output_name='../plot.pdf'):
     plt.clf()
     plt.plot(df[column1], df[column2])

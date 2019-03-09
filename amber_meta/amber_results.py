@@ -4,6 +4,16 @@ from .amber_utils import (
     check_path_ends_with_slash
 )
 
+"""
+.. module:: amber_results
+   :platform: Unix, Windows
+   :synopsis: Module to load amber's results
+
+.. moduleauthor:: D. Vohl <vohl@astron.nl>
+
+
+"""
+
 def get_header(filename, sep=' '):
     with open(filename, 'r') as f:
         return f.readline().split('\n')[0].split('# ')[1].split(sep)
