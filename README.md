@@ -4,10 +4,12 @@
 
 This repository integrates a few routines to launch [amber](http://github.com/AA-ALERT/AMBER_setup) in a systematic manner.
 
-## License
+## Getting the code
 
-This project is Copyright (c) D. Vohl and licensed under
-the terms of the GNU GPL v3+ license.
+```shell
+git clone https://github.com/macrocosme/amber_meta.git
+cd amber_meta/
+```
 
 ## Usage
 
@@ -46,3 +48,8 @@ pairplot(
   output_name='../pairplot.pdf'
 )
 ```
+
+## License
+
+This project is Copyright (c) D. Vohl and licensed under
+the terms of the GNU GPL v3+ license.
