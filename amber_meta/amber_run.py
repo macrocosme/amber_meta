@@ -4,6 +4,7 @@ import argparse
 import subprocess
 from amber_options import AmberOptions
 from amber_utils import (
+    get_full_output_path_and_file,
     get_filterbank_header,
     get_nbatch,
     pretty_print_command,
@@ -14,6 +15,7 @@ from amber_utils import (
 from amber_results import read_amber_run_results
 
 AMBER_SETUP_PATH = '/home/vohl/AMBER_setup/'
+
 
 def create_amber_command(base_name='scenario_3_partitions',
                          input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
@@ -28,7 +30,7 @@ def create_amber_command(base_name='scenario_3_partitions',
                          output_dir='/data1/vohl/results/rfim/',
                          verbose=True,
                          root_name=None):
-    '''Launch amber.
+    """Launch amber.
 
     Creates an amber launch command to be run with subprocess.
 
@@ -50,11 +52,11 @@ def create_amber_command(base_name='scenario_3_partitions',
     Returns
     -------
         nothing.
-    '''
+    """
 
     if verbose:
-        print ("Scenario:", scenario_file)
-        print ()
+        print("Scenario:", scenario_file)
+        print()
 
     # Get scenario
     scenario_dict = parse_scenario_to_dictionary(scenario_file)
@@ -72,7 +74,7 @@ def create_amber_command(base_name='scenario_3_partitions',
     # Pin down amber's to cpu id 'cpu_id'
     command = ['taskset', '-c', str(cpu_id), 'amber']
     amber_options = AmberOptions(rfim=rfim,
-				                 rfim_mode=rfim_mode,
+                                 rfim_mode=rfim_mode,
                                  snr_mode=snr_mode,
                                  input_data_mode=input_data_mode,
                                  downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
@@ -100,24 +102,12 @@ def create_amber_command(base_name='scenario_3_partitions',
         elif option == 'zapped_channels':
             command.append(config_path + 'zapped_channels.conf')
         elif option == 'threshold':
-	        command.append(str(snrmin))
+            command.append(str(snrmin))
         elif option == 'data':
             command.append(input_file)
         elif option == 'output':
             command.append(
-                "%s%s%s%s" % (
-                    check_directory_exists(
-                        check_path_ends_with_slash(
-                            '%s%s' % (
-                                check_path_ends_with_slash(output_dir),
-                                root_name if root_name != None else base_name,
-                            )
-                        )
-                    ),
-                    root_name if root_name != None else base_name,
-                    '_step_',
-                    str(cpu_id+1)
-                )
+                get_full_output_path_and_file(output_dir, base_name, root_name=None)
             )
         elif option == 'header':
             command.append(str(header_size))
@@ -132,38 +122,39 @@ def create_amber_command(base_name='scenario_3_partitions',
 
     return command
 
+
 def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_only=True):
-    '''Run amber starting from a yaml root scenario file.
+    """Run amber starting from a yaml root scenario file.
 
     Launches a amber scenario where each step is run as independent sub-processes.
 
     Parameters
     ----------
-        input_file: string: (.yaml | .yml] 
-	root: string: (Name of root scenario in input yaml.)
-	verbose: Boolean
-    Returns
+        input_file: string: (.yaml | .yml]
+        root: string: (Name of root scenario in input yaml.)
+        verbose: Boolean
+        Returns
     -------
         nothing.
-    '''
+    """
     assert input_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_file)[root]
 
     root_name = input_file.split('.')[-2].split('/')[-1]
     if verbose:
-        print ('ROOT_NAME', root_name)
+        print('ROOT_NAME', root_name)
 
     if verbose:
-        print (base)
+        print(base)
 
     for cpu_id in range(base['n_cpu']):
-        command = create_amber_command (
+        command = create_amber_command(
             base_name=base['base_name'],
             input_file=base['input_file'],
             scenario_file='%s%s%s' % (
-               check_path_ends_with_slash(base['base_scenario_path']),
-               check_path_ends_with_slash(base['base_name']),
-               base['scenario_files'][cpu_id],
+                check_path_ends_with_slash(base['base_scenario_path']),
+                check_path_ends_with_slash(base['base_name']),
+                base['scenario_files'][cpu_id],
             ),
             config_path='%s%s' % (
                 check_path_ends_with_slash(base['base_config_path']),
@@ -186,24 +177,26 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
             # Launch amber, and detach from the process so it runs by itself
             subprocess.Popen(command, preexec_fn=os.setpgrp)
 
+
 def test_amber_run(input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    n_cpu=3,
                    base_name='tuning_halfrate_3GPU_goodcentralfreq',
                    base_scenario_path='/home/vohl/software/AMBER/scenario/',
-                   scenario_files = ['tuning_1.sh', 'tuning_2.sh', 'tuning_3.sh'],
+                   scenario_files=['tuning_1.sh', 'tuning_2.sh', 'tuning_3.sh'],
                    snrmin=8,
                    base_config_path='/home/vohl/software/AMBER/configuration/',
                    config_repositories=[
-                        'tuning_halfrate_3GPU_goodcentralfreq_step1',
-                        'tuning_halfrate_3GPU_goodcentralfreq_step2',
-                        'tuning_halfrate_3GPU_goodcentralfreq_step3'],
+                       'tuning_halfrate_3GPU_goodcentralfreq_step1',
+                       'tuning_halfrate_3GPU_goodcentralfreq_step2',
+                       'tuning_halfrate_3GPU_goodcentralfreq_step3'
+                   ],
                    rfim=True,
                    rfim_mode='time_domain_sigma_cut',
                    snr_mode='snr_mom_sigmacut',
                    input_data_mode='sigproc',
                    verbose=True,
                    print_only=False):
-    '''Test amber.
+    """Test amber.
 
     Creates three amber jobs.
 
@@ -228,15 +221,15 @@ def test_amber_run(input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfr
     Returns
     -------
         nothing.
-    '''
+    """
     for cpu_id in range(n_cpu):
-        command = create_amber_command (
+        command = create_amber_command(
             base_name=base_name,
             input_file=input_file,
             scenario_file='%s%s%s' % (
-               check_path_ends_with_slash(base_scenario_path),
-               check_path_ends_with_slash(base_name),
-               scenario_files[cpu_id],
+                check_path_ends_with_slash(base_scenario_path),
+                check_path_ends_with_slash(base_name),
+                scenario_files[cpu_id],
             ),
             config_path='%s%s' % (
                 check_path_ends_with_slash(base_config_path),
@@ -257,19 +250,31 @@ def test_amber_run(input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfr
             # Launch amber, and detach from the process so it runs by itself
             subprocess.Popen(command, preexec_fn=os.setpgrp)
 
+
 def get_amber_run_results_from_root_yaml(input_file, root='subband', verbose=False):
+    """Run amber starting from a yaml root scenario file.
+    Launches a amber scenario where each step is run as independent sub-processes.
+    Parameters
+    ----------
+        input_file: string: (.yaml | .yml]
+    root: string: (Name of root scenario in input yaml.)
+    verbose: Boolean
+    Returns
+    -------
+        nothing.
+    """
     assert input_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_file)[root]
 
     if verbose:
-        print (base)
+        print(base)
 
     return read_amber_run_results(base['output_dir'], verbose=verbose)
 
 
 def tune_amber(scenario_file='/home/vohl/software/AMBER/scenario/tuning_halfrate_3GPU_goodcentralfreq/tuning_1.sh',
                config_path='/home/vohl/software/AMBER/configuration/tuning_halfrate_3GPU_goodcentralfreq_step1'):
-    '''Tune amber.
+    """Tune amber.
 
     Tune amber based on a scenario file. The output is save to config_path.
 
@@ -281,7 +286,7 @@ def tune_amber(scenario_file='/home/vohl/software/AMBER/scenario/tuning_halfrate
     Returns
     -------
         nothing.
-    '''
+    """
     # Format input to correspond to behaviour we want
     config_path = check_path_ends_with_slash(config_path)
 
@@ -292,11 +297,12 @@ def tune_amber(scenario_file='/home/vohl/software/AMBER/scenario/tuning_halfrate
     subprocess.Popen(command, preexec_fn=os.setpgrp)
     # os.system([for c in command print (c),][0] + '&' )
 
+
 def test_tune(base_scenario_path='/home/vohl/software/AMBER/scenario/tuning_halfrate_3GPU_goodcentralfreq/',
               base_name='tuning_halfrate_3GPU_goodcentralfreq',
-              scenario_files = ['tuning_1.sh', 'tuning_2.sh', 'tuning_3.sh'],
+              scenario_files=['tuning_1.sh', 'tuning_2.sh', 'tuning_3.sh'],
               config_path='/home/vohl/software/AMBER/configuration/'):
-    '''Test tuning amber.
+    """Test tuning amber.
 
     Launch tune_amber for three scenarios.
 
@@ -310,24 +316,24 @@ def test_tune(base_scenario_path='/home/vohl/software/AMBER/scenario/tuning_half
     Returns
     -------
         nothing.
-    '''
+    """
 
-    base_scenario_path=check_path_ends_with_slash(base_scenario_path)
+    base_scenario_path = check_path_ends_with_slash(base_scenario_path)
     i = 1
     for file in scenario_files:
-        input_file = base_scenario_path+'tuning_'+str(i)+'.sh'
-        output_dir = config_path+base_name+'_step'+str(i)
+        input_file = base_scenario_path + 'tuning_' + str(i) + '.sh'
+        output_dir = config_path + base_name + '_step' + str(i)
 
-        print (i, input_file, output_dir)
-        print ()
+        print(i, input_file, output_dir)
+        print()
 
         output_dir = check_directory_exists(output_dir)
 
         tune_amber(input_file, output_dir)
-        i+=1
+        i += 1
+
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument('--verbose',
                         help="Print amber commands",

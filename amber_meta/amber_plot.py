@@ -36,11 +36,11 @@ def pairplot(df, output_name='../pairplot.pdf'):
     plt.savefig(output_name)
 
 def plot_corr(df,size=10, output_name='corr.pdf'):
-    '''Function plots a graphical correlation matrix for each pair of columns in the dataframe.
+    """Function plots a graphical correlation matrix for each pair of columns in the dataframe.
 
     Input:
         df: pandas DataFrame
-        size: vertical and horizontal size of the plot'''
+        size: vertical and horizontal size of the plot"""
     plt.clf()
     corr = df.corr()
     fig, ax = plt.subplots(figsize=(size, size))
