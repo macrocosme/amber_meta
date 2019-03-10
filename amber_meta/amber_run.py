@@ -149,6 +149,7 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
     base = parse_scenario_to_dictionary(input_file)[root]
 
     root_name = input_file.split('.')[-2].split('/')[-1]
+
     if verbose:
         print('ROOT_NAME', root_name)
 
@@ -266,11 +267,14 @@ def get_amber_run_results_from_root_yaml(input_file, root='subband', verbose=Fal
     """
     assert input_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_file)[root]
+    root_name = input_file.split('.')[-2].split('/')[-1]
 
     if verbose:
         print(base)
 
-    return read_amber_run_results(base['output_dir'], verbose=verbose)
+    full_output_dir = check_path_ends_with_slash(base['output_dir']) + root_name
+
+    return read_amber_run_results(full_output_dir, verbose=verbose)
 
 
 def tune_amber(scenario_file='/home/vohl/software/AMBER/scenario/tuning_halfrate_3GPU_goodcentralfreq/tuning_1.sh',
