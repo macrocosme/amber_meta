@@ -40,17 +40,22 @@ def corr(df, output_name='../corr.pdf'):
     plt.savefig(output_name)
 
 def pairplot(df, output_name='../pairplot.pdf'):
+    """Function to plot a graphical scatter plots
+
+    For each pair of columns in the dataframe, plot a scatter plots.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+    output_name : str
+        Filename of output [.pdf | .png]
+    """
     plt.clf()
     sns.pairplot(df)
     plt.tight_layout()
     plt.savefig(output_name)
 
 def plot_corr(df,size=10, output_name='corr.pdf'):
-    """Function plots a graphical correlation matrix for each pair of columns in the dataframe.
-
-    Input:
-        df: pandas DataFrame
-        size: vertical and horizontal size of the plot"""
     plt.clf()
     corr = df.corr()
     fig, ax = plt.subplots(figsize=(size, size))

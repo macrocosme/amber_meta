@@ -17,11 +17,16 @@ from .amber_utils import (
 def get_header(filename, sep=' '):
     """Get filterbank's header.
 
-    Args:
-        filename (string): filterbank file to read
-        sep (string): Separator
-    Returns:
-        header (dict): Hearder
+    Parameters
+    ----------
+    filename  : str
+        filterbank file to read
+    sep  : str
+        Separator
+    Returns
+    -------
+    header : dict
+        Filterbank's header
     """
     with open(filename, 'r') as f:
         return f.readline().split('\n')[0].split('# ')[1].split(sep)
@@ -29,12 +34,18 @@ def get_header(filename, sep=' '):
 def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
     """Read amber results from a run.
 
-    Args:
-        run_output_dir (string): Path to output .trigger files
-        verbose (boolg): Print developement information
-        sep (string): Separator
-    Returns:
-        df (Pandas.DataFrame): All results in one dataframe
+    Parameters
+    ----------
+    run_output_dir : str
+        Path to output .trigger files
+    verbose : bool
+        Print developement information
+    sep  : str
+        Separator
+    Returns
+    -------
+    df : Pandas.DataFrame
+        All results in one dataframe.
     """
     # Get input file's header (amber format)
     header = get_header(

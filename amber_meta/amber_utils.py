@@ -22,12 +22,15 @@ from os.path import isfile, join
 def get_full_output_path_and_file(output_dir, base_name, root_name=None, cpu_id = 0):
     """Get full output path and file name
 
-    Args:
-        output_dir (string):
-        base_name (string):
-        root_name (string):
-    Returns:
-        path_and_file (string):
+    Parameters
+    ----------
+    output_dir : str
+    base_name : str
+    root_name : str
+
+    Returns
+    -------
+    path_and_file : str
     """
     return "%s%s%s%s" % (
         check_directory_exists(
@@ -46,12 +49,16 @@ def get_full_output_path_and_file(output_dir, base_name, root_name=None, cpu_id 
 def get_max_dm(scenario_dict):
     """Computes maximum dm.
 
-    Args:
-        scenario_dict (dict): Scenario dictionary outputed by
-                              amber_utils.parse_scenario_to_dictionary()
+    Parameters
+    ----------
+    scenario_dict : dict
+        Scenario dictionary outputed by
+        amber_utils.parse_scenario_to_dictionary()
 
-    Returns:
-        max_dm (float): Maximum DM
+    Returns
+    -------
+    max_dm : float
+        Maximum DM
     """
     return scenario_dict['SUBBANDING_DM_FIRST'] + \
            scenario_dict['SUBBANDING_DM_STEP'] * scenario_dict['SUBBANDING_DMS']
@@ -59,12 +66,16 @@ def get_max_dm(scenario_dict):
 def get_filterbank_header(input_file, verbose=False):
     """Get header and header_size from filterbank
 
-    Args:
-        input_file (string): 
+    Parameters
+    ----------
+    input_file  : str
 
-    Returns:
-        header (dict): filterbank.read_header.header
-        header_size (int): filterbank.read_header.header_size
+    Returns
+    -------
+    header : dict
+        filterbank.read_header.header
+    header_size : int
+        filterbank.read_header.header_size
     """
     header, header_size = filterbank__read_header(input_file)
     if verbose:
@@ -76,13 +87,17 @@ def get_filterbank_header(input_file, verbose=False):
 def get_nbatch(input_file, header, header_size, samples, verbose=False):
     """Get number of batches (nbatch) available in filterbank
 
-    Args:
-        input_file (string):
-        header (dict): filterbank.read_header.header
-        header_size (int): filterbank.read_header.header_size
+    Parameters
+    ----------
+    input_file  : str
+    header : dict
+        filterbank.read_header.header
+    header_size : int
+        filterbank.read_header.header_size
 
-    Returns:
-        nbatch (integer): 
+    returns
+    -------
+    nbatch : int
     """
     if verbose:
         print ('NBATCH:', sigproc__samples_per_file(input_file, header, header_size)//samples)
@@ -96,8 +111,9 @@ def pretty_print_command (command):
 
     Prints each element of the 'command' list as a string.
 
-    Args:
-        command (list):
+    Parameters
+    ----------
+    command : list
     """
     c = ''
     for v in command:
@@ -110,11 +126,13 @@ def check_path_ends_with_slash(path):
 
     If directory does not end with a slash, add one at the end.
 
-    Args:
-        directory (string): 
+    Parameters
+    ----------
+    directory : str
 
-    Returns:
-        directory (string): 
+    Returns
+    -------
+    directory : str
     """
     if path[-1] != '/':
         path = path + '/'
@@ -125,11 +143,13 @@ def check_directory_exists(directory):
 
     If directory does not end with a slash, add one at the end.
 
-    Args:
-        directory (string): 
+    Parameters
+    ----------
+    directory  : str
 
-    Returns:
-        directory (string): 
+    Returns
+    -------
+    directory  : str
     """
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -141,8 +161,9 @@ def list_files_with_paths_recursively(my_path):
     Recursively list files in my_path and returns the list in
     the form of ['path/to/file/myfile.extension', '...']
 
-    Args:
-        my_path (string): 
+    Parameters
+    ----------
+    my_path  : str
     """
     my_files = []
     for (dirpath, dirnames, filenames) in walk(my_path):
@@ -154,22 +175,26 @@ def list_files_with_paths_recursively(my_path):
 def list_files_in_current_path(path):
     """Returns files in the current folder only
 
-    Args:
-        path (string): 
+    Parameters
+    ----------
+    path  : str
 
-    Returns:
-        files: list
+    Returns
+    -------
+    files : list
     """
     return [ f for f in listdir(path) if isfile(join(path,f)) ]
 
 def get_Files(path):
     """Returns files in the current folder only
 
-    Args:
-        path (string): 
+    Parameters
+    ----------
+    path  : str
 
-    Returns:
-        files: list
+    Returns
+    -------
+    files : list
     """
     return [ f for f in listdir(path) if isfile(join(path,f)) ]
 
@@ -179,11 +204,15 @@ def parse_scenario_to_dictionary(scenario_file):
     Accepted file extensions: [.yaml | .yml], and [.sh] as described in
     https://github.com/AA-ALERT/AMBER_setup/blob/development/examples/scenario.sh
 
-    Args:
-        scenario_file: amber scenario file (including path)
+    Parameters
+    ----------
+    scenario_file : str
+        amber scenario file (including path)
 
-    Returns:
-        scenario_dict: parsed dictionary
+    Returns
+    -------
+    scenario_dict : dict
+        parsed dictionary
     """
     if scenario_file.split('.')[-1] == 'sh':
         scenario_dict = parse_sh_scenario_to_dictionary(scenario_file)
@@ -203,11 +232,15 @@ def parse_sh_scenario_to_dictionary(scenario_file):
     Note that the extension is not required per se,
     but the file structure should follow a shell variable structure.
 
-    Args:
-        scenario_file: amber scenario file (including path)
+    Parameters
+    ----------
+    scenario_file : str
+        amber scenario file (including path)
 
-    Returns:
-        scenario_dict: parsed dictionary
+    Returns
+    -------
+    scenario_dict : dict
+        parsed dictionary
     """
     scenario_dict = {}
     with open(scenario_file, 'r') as f:
@@ -220,11 +253,15 @@ def parse_sh_scenario_to_dictionary(scenario_file):
 def parse_yaml_scenario_to_dictionary(scenario_file, scenario_name=None):
     """Parse an amber scenario file (yaml) to a python dictionary
 
-    Args:
-        scenario_file: amber scenario file in yaml format (including path)
+    Parameters
+    ----------
+    scenario_file : str
+        amber scenario file in yaml format (including path)
 
-    Returns:
-        scenario_dict: parsed dictionary
+    Returns
+    -------
+    scenario_dict : dict
+        parsed dictionary
     """
     scenario_dict = {}
 

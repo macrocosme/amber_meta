@@ -44,19 +44,32 @@ def create_amber_command(base_name='scenario_3_partitions',
 
     Creates an amber launch command to be run with subprocess.
 
-    Args:
-        base_name(string):
-        input_file(string):
-        scenario_file(string):
-        config_path(string):
-        rfim: boolean
-        rfim_mode(string):
-        snr_mode(string):
-        input_data_mode(string):
-        cpu_id(integer):
-        snrmin(integer):
-        output_dir(string):
-        root_name(string):
+    Parameters
+    ----------
+    base_name : str
+        Base name.
+    input_file : str
+        Intput filterbank file.
+    scenario_file : str
+        Scenario file (including path)
+    config_path : str
+        Path of configuration files
+    rfim : bool
+        Use RFI mitigation or not.
+    rfim_mode : str
+        RFI mitigation mode. Choices: [time_domain_sigma_cut | frequency_domain_sigma_cut]
+    snr_mode : str
+        SNR mode. Choices: [snr_standard | snr_momad | snr_mom_sigmacut]
+    input_data_mode : str
+        Input data mode. Choices: [sigproc | data]
+    cpu_id : int
+        CPU id for process and GPU.
+    snrmin : int
+        Minimum SNR for outlier detection.
+    output_dir : str
+        Output directory.
+    root_name : str
+        Root name used for output.
     """
 
     if verbose:
@@ -140,10 +153,14 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
 
     Launches a amber scenario where each step is run as independent sub-processes.
 
-    Args:
-        input_file(string): Input filename with .yaml or .yml extension
-        root(string): (Name of root scenario in input yaml.)
-        verbose(bool)
+    Parameters
+    ----------
+    input_file : str
+        Input filename with .yaml or .yml extension.
+    root : str
+        Name of root scenario in input yaml.
+    verbose : bool
+        Print extra information at runtime.
     """
     assert input_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_file)[root]
@@ -209,22 +226,25 @@ def test_amber_run(input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfr
 
     Creates three amber jobs.
 
-    Args:
-        amber_mode(string):
-        input_file(string):
-        n_cpu(integer):
-        base_name(string):
-        base_scenario_path(string):
-        scenario_files: list(strings)
-        snrmin(integer):
-        base_config_path(string):
-        config_repositories: list(strings)
-        rfim: boolean
-        rfim_mode(string):
-        snr_mode(string):
-        input_data_mode(string):
-        verbose: boolean
-        print_only: boolean
+    Parameters
+    ----------
+    amber_mode : str
+    input_file : str
+    n_cpu : int
+    base_name : str
+    base_scenario_path : str
+    scenario_files : list
+    snrmin : int
+    base_config_path : str
+    config_repositories : list
+    rfim : bool
+    rfim_mode : str
+    snr_mode : str
+    input_data_mode : str
+    verbose : bool
+        Print extra information at runtime.
+    print_only : bool
+        Only print the command without launching it.
     """
     for cpu_id in range(n_cpu):
         command = create_amber_command(
@@ -260,10 +280,14 @@ def get_amber_run_results_from_root_yaml(input_file, root='subband', verbose=Fal
 
     Launches a amber scenario where each step is run as independent sub-processes.
 
-    Args:
-        input_file(string): Accepted format are .yaml and .yml
-        root(string): Name of root scenario in input yaml.
-        verbose(boolean):
+    Parameters
+    ----------
+    input_file : str
+        Accepted format are .yaml and .yml
+    root : str
+        Name of root scenario in input yaml.
+    verbose : bool
+        Print extra information at runtime.
     """
     assert input_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_file)[root]
@@ -283,9 +307,10 @@ def tune_amber(scenario_file='/home/vohl/software/AMBER/scenario/tuning_halfrate
 
     Tune amber based on a scenario file. The output is save to config_path.
 
-    Args:
-        scenario_file(string):
-        config_path(string):
+    Parameters
+    ----------
+    scenario_file : str
+    config_path : str
     """
     # Format input to correspond to behaviour we want
     config_path = check_path_ends_with_slash(config_path)
@@ -306,11 +331,11 @@ def test_tune(base_scenario_path='/home/vohl/software/AMBER/scenario/tuning_half
 
     Launch tune_amber for three scenarios.
 
-    Args:
-        base_scenario_path(string):
-        base_name(string):
-        scenario_files(list):
-        config_path(string):
+    Parameters
+    base_scenario_path : str
+    base_name : str
+    scenario_files : list
+    config_path : str
     """
 
     base_scenario_path = check_path_ends_with_slash(base_scenario_path)
