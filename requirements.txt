@@ -6,4 +6,3 @@ matplotlib
 pandas
 seaborn
 sphinx_automodapi
-pluginmanager

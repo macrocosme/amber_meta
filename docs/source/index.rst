@@ -61,15 +61,10 @@ License
    This project is licensed under the terms of the GNU GPL v3+ license.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
    About
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Modules:
-
    amber_run
    amber_utils
    amber_options
