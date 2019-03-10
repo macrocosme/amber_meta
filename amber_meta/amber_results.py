@@ -1,6 +1,6 @@
 from pandas import read_csv as pandas__read_csv
 from .amber_utils import (
-    get_Files,
+    list_files_in_current_path,
     check_path_ends_with_slash
 )
 
@@ -40,7 +40,7 @@ def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
     header = get_header(
         "%s%s" % (
             check_path_ends_with_slash(run_output_dir),
-            get_Files(run_output_dir)[0]
+            list_files_in_current_path(run_output_dir)[0]
         ), sep)
 
     # Create empty dataframe
@@ -48,7 +48,7 @@ def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
         # path/to/file.trigger
         "%s%s" % (
             check_path_ends_with_slash(run_output_dir),
-            get_Files(run_output_dir)[0]
+            list_files_in_current_path(run_output_dir)[0]
         ),
         sep=sep,
         names=header,
@@ -56,7 +56,7 @@ def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
     )
 
     # Go through output files
-    for file in get_Files(run_output_dir)[1:]:
+    for file in list_files_in_current_path(run_output_dir)[1:]:
         if '.trigger' in file:
             if verbose:
                 print (file)
