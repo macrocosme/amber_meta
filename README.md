@@ -4,16 +4,18 @@
 
 This repository integrates a few routines to launch [amber](http://github.com/AA-ALERT/AMBER_setup) in a systematic manner.
 
-## License
+## Getting the code
 
-This project is Copyright (c) D. Vohl and licensed under
-the terms of the GNU GPL v3+ license.
+```shell
+git clone https://github.com/macrocosme/amber_meta.git
+cd amber_meta/
+```
 
 ## Usage
 
 The most basic usage is via `python amber_run.py`, and parameters that will be prompted. 
 
-Else, more advanced usage involves function not yet added to amber_runs's main. In an ipython session: 
+Else, more advanced usage involves functions not yet added to amber_runs's main. In an ipython session: 
 
 ```python
 import amber_meta.amber_run as ar
@@ -46,3 +48,8 @@ pairplot(
   output_name='../pairplot.pdf'
 )
 ```
+
+## License
+
+This project is Copyright (c) D. Vohl and licensed under
+the terms of the GNU GPL v3+ license.
