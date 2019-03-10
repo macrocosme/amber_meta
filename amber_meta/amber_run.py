@@ -100,6 +100,8 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(config_path + 'tdsc.conf')
         elif option == 'downsampling_configuration':
             command.append(config_path + 'downsampling.conf')
+        elif option == 'downsampling':
+            pass
         elif option == 'downsampling_factor':
             command.append(scenario_dict['DOWNSAMPLING'])
         elif option == 'integration_steps':
