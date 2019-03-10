@@ -28,16 +28,16 @@ AMBER_SETUP_PATH = '/home/vohl/AMBER_setup/'
 
 
 def create_amber_command(base_name='scenario_3_partitions',
-                         input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
-                         scenario_file='/home/vohl/software/AMBER/scenario/3_dms_partitions/12500/scenario_3_partitions_step1_12500.sh',
-                         config_path='/home/vohl/software/AMBER/install/scenario_3_partitions_step1_12500/',
+                         input_file='data/filterbank/file.fil',
+                         scenario_file='$SOURCE_ROOT/scenario/3_dms_partitions/scenario_3_partitions_step1.sh',
+                         config_path='$SOURCE_ROOT/install/scenario_3_partitions_step1/',
                          rfim=True,
                          rfim_mode='time_domain_sigma_cut',
                          snr_mode='snr_mom_sigmacut',
                          input_data_mode='sigproc',
                          cpu_id=1,
                          snrmin=10,
-                         output_dir='/data1/vohl/results/rfim/',
+                         output_dir='$OUTPUT_ROOT/results/',
                          verbose=True,
                          root_name=None):
     """Launch amber.
@@ -204,13 +204,13 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
             subprocess.Popen(command, preexec_fn=os.setpgrp)
 
 
-def test_amber_run(input_file='/data1/output/snr_tests_liam/20190214/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
+def test_amber_run(input_file='data/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    n_cpu=3,
                    base_name='tuning_halfrate_3GPU_goodcentralfreq',
                    base_scenario_path='/home/vohl/software/AMBER/scenario/',
                    scenario_files=['tuning_1.sh', 'tuning_2.sh', 'tuning_3.sh'],
                    snrmin=8,
-                   base_config_path='/home/vohl/software/AMBER/configuration/',
+                   base_config_path='$SOURCE_ROOT/configuration/',
                    config_repositories=[
                        'tuning_halfrate_3GPU_goodcentralfreq_step1',
                        'tuning_halfrate_3GPU_goodcentralfreq_step2',
@@ -301,8 +301,8 @@ def get_amber_run_results_from_root_yaml(input_file, root='subband', verbose=Fal
     return read_amber_run_results(full_output_dir, verbose=verbose)
 
 
-def tune_amber(scenario_file='/home/vohl/software/AMBER/scenario/tuning_halfrate_3GPU_goodcentralfreq/tuning_1.sh',
-               config_path='/home/vohl/software/AMBER/configuration/tuning_halfrate_3GPU_goodcentralfreq_step1'):
+def tune_amber(scenario_file='$SOURCE_ROOT/scenario/tuning_step1.sh',
+               config_path='$SOURCE_ROOT/configuration/tuning_step1'):
     """Tune amber.
 
     Tune amber based on a scenario file. The output is save to config_path.
@@ -323,10 +323,10 @@ def tune_amber(scenario_file='/home/vohl/software/AMBER/scenario/tuning_halfrate
     # os.system([for c in command print (c),][0] + '&' )
 
 
-def test_tune(base_scenario_path='/home/vohl/software/AMBER/scenario/tuning_halfrate_3GPU_goodcentralfreq/',
+def test_tune(base_scenario_path='$SOURCE_ROOT/scenario/',
               base_name='tuning_halfrate_3GPU_goodcentralfreq',
               scenario_files=['tuning_1.sh', 'tuning_2.sh', 'tuning_3.sh'],
-              config_path='/home/vohl/software/AMBER/configuration/'):
+              config_path='$SOURCE_ROOT/configuration/'):
     """Test tuning amber.
 
     Launch tune_amber for three scenarios.
