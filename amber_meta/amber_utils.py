@@ -254,7 +254,7 @@ def create_rfim_configuration_thresholds(config_path,
         copy_filename = "%s%s%s%s" % (
             confs.configurations[rfim_mode][option],
             '_threshold_',
-            new_thresholds,
+            new_threshold,
             confs.suffix
         )
 
@@ -274,7 +274,7 @@ def create_rfim_configuration_thresholds(config_path,
                 copy_filename
             ),
             text_to_search = original_threshold,
-            text_to_replace = new_thresholds
+            text_to_replace = new_threshold
         )
 
 def parse_scenario_to_dictionary(scenario_file):
