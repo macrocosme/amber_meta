@@ -9,7 +9,7 @@ try:
     from sigproc import samples_per_file as sigproc__samples_per_file
 except:
     pass
-from amber_configuration import AmberConfiguration
+from .amber_configuration import AmberConfiguration
 
 """
 .. module:: amber_utils

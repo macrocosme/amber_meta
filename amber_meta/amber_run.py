@@ -11,7 +11,8 @@ from .amber_utils import (
     pretty_print_command,
     check_path_ends_with_slash,
     check_directory_exists,
-    parse_scenario_to_dictionary
+    parse_scenario_to_dictionary,
+    create_rfim_configuration_thresholds
 )
 from .amber_results import read_amber_run_results
 
@@ -69,6 +70,8 @@ def create_amber_command(base_name='scenario_3_partitions',
         Minimum SNR for outlier detection.
     output_dir : str
         Output directory.
+    verbose : bool
+        Print extra information at runtime.
     root_name : str
         Root name used for output.
     """
@@ -128,7 +131,7 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(
                 "%s%s%s" % (
                     config_path,
-                    amber_configs.configurations[option]
+                    amber_configs.configurations[option],
                     amber_configs.suffix
                 )
             )
@@ -216,6 +219,35 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
             # Launch amber, and detach from the process so it runs by itself
             subprocess.Popen(command, preexec_fn=os.setpgrp)
 
+def create_rfim_configuration_thresholds_from_yaml_root(input_file,
+                                                        root='subband',
+                                                        thresholds = ['2.00', '2.25', '2.75', '3.00']):
+    """Create RFIm configuration files from starting with a yaml root
+
+    Parameters
+    ----------
+    input_file : str
+        Input root yaml file
+    root : str
+        Root value of the yaml file. Default: 'subband'
+    thresholds : list
+        Thresholds files to be generated. Default: ['2.00', '2.25', '2.75', '3.00']
+    """
+    assert input_file.split('.')[-1] in ['yaml', 'yml']
+    base = parse_scenario_to_dictionary(input_file)[root]
+
+    root_name = input_file.split('.')[-2].split('/')[-1]
+
+    for new_threshold in thresholds:
+        create_rfim_configuration_thresholds(
+            config_path = config_path='%s%s' % (
+                check_path_ends_with_slash(base['base_config_path']),
+                check_path_ends_with_slash(base['config_repositories'][cpu_id]),
+            ),
+            rfim_mode=base['rfim_mode'],
+            original_threshold='2.50',
+            new_threshold=new_threshold,
+            duplicate=True)
 
 def test_amber_run(input_file='data/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    n_cpu=3,
