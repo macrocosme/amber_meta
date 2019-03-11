@@ -35,6 +35,7 @@ def create_amber_command(base_name='scenario_3_partitions',
                          config_path='$SOURCE_ROOT/install/scenario_3_partitions_step1/',
                          rfim=True,
                          rfim_mode='time_domain_sigma_cut',
+                         rfim_threshold=None,
                          snr_mode='snr_mom_sigmacut',
                          input_data_mode='sigproc',
                          cpu_id=1,
@@ -60,6 +61,8 @@ def create_amber_command(base_name='scenario_3_partitions',
         Use RFI mitigation or not.
     rfim_mode : str
         RFI mitigation mode. Choices: [time_domain_sigma_cut | frequency_domain_sigma_cut]
+    rfim_threshold : str
+        Override rfim threshold value. Default: None
     snr_mode : str
         SNR mode. Choices: [snr_standard | snr_momad | snr_mom_sigmacut]
     input_data_mode : str
@@ -121,9 +124,10 @@ def create_amber_command(base_name='scenario_3_partitions',
             pass # Do not pass any option (TODO: fix naming rule issue with downsampling_configuration)
         elif option in ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']:
             command.append(
-                "%s%s%s" % (
+                "%s%s%s%s" % (
                     config_path,
                     amber_configs.configurations[rfim_mode][option],
+                    "" if rfim_threshold in [None, 'None'] else "%s%s" % ('_threshold_', rfim_threshold),
                     amber_configs.suffix
                 )
             )
@@ -204,6 +208,7 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
             ),
             rfim=base['rfim'],
             rfim_mode=base['rfim_mode'],
+            rfim_threshold=base['rfim_threshold'],
             snr_mode=base['snr_mode'],
             input_data_mode=base['input_data_mode'],
             cpu_id=cpu_id,
@@ -218,6 +223,20 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
         if not print_only:
             # Launch amber, and detach from the process so it runs by itself
             subprocess.Popen(command, preexec_fn=os.setpgrp)
+
+def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root',
+                                                 root='subband',
+                                                 threshold='2.00',
+                                                 verbose=False,
+                                                 print_only=False):
+    run_amber_from_yaml_root(
+        '%s_%s.yaml' % (
+            input_basename,
+            threshold
+        ),
+        verbose=verbose,
+        print_only=print_only
+    )
 
 def create_rfim_configuration_thresholds_from_yaml_root(input_file,
                                                         root='subband',
