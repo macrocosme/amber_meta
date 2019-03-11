@@ -50,7 +50,7 @@ class AmberConfiguration:
     def __init__(self,
                  rfim=False,
                  rfim_mode='time_domain_sigma_cut',
-                 downsampling=False)
+                 downsampling=False):
         self.configurations = {}
         if rfim:
             self.configurations[rfim_mode] = self.rfim_config_files[rfim_mode]
@@ -58,6 +58,7 @@ class AmberConfiguration:
             self.configurations['downsampling_configuration'] = self.downsampling_configuration
         self.configurations['integration_steps'] = self.integration_steps
         self.configurations['zapped_channels'] = self.zapped_channels
+
     def get_rfim_confs_list(rfim_mode):
         """Get list of configuration files for RFIm
 
