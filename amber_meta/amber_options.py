@@ -15,12 +15,48 @@ class AmberOptions:
     parameters as input. All command options will be availble via
     self.options.
 
-    >>> amber_options = AmberOptions(rfim=True,
+    >>> amber_options = AmberOptions(rfim=False,
                                      rfim_mode='time_domain_sigma_cut',
                                      snr_mode='snr_mom_sigmacut',
                                      input_data_mode='sigproc',
                                      downsampling=False)
     >>> amber_options.options
+    ['print',
+     'opencl_platform',
+     'opencl_device',
+     'device_name',
+     'sync',
+     'padding_file',
+     'zapped_channels',
+     'integration_steps',
+     'integration_file',
+     'compact_results',
+     'output',
+     'dms',
+     'dm_first',
+     'dm_step',
+     'threshold',
+     'snr_mom_sigmacut',
+     'max_std_file',
+     'mom_stepone_file',
+     'mom_steptwo_file',
+     'sigproc',
+     'stream',
+     'header',
+     'data',
+     'batches',
+     'channels',
+     'min_freq',
+     'channel_bandwidth',
+     'samples',
+     'sampling_time',
+     'subband_dedispersion',
+     'dedispersion_stepone_file',
+     'dedispersion_steptwo_file',
+     'subbands',
+     'subbanding_dms',
+     'subbanding_dm_first',
+     'subbanding_dm_step']
 
     Parameters
     ----------
