@@ -213,8 +213,12 @@ def duplicate_config_file(config_path, base_filename, copy_filename):
         check_path_ends_with_slash(config_path),
         copy_filename
     )
+<<<<<<< HEAD
     command = ['cp', '-f', base_file, copy_file]
     subprocess.Popen(command)
+=======
+    subprocess.run(['cp', base_file, copy_file])
+>>>>>>> 38a804b06361fceec46867fc35f591a9918ba607
 
 def find_replace(filename, text_to_search, text_to_replace, inplace=True, verbose=False):
     """Find text_to_search in filename and replace it with text_to_replace
@@ -259,8 +263,11 @@ def create_rfim_configuration_thresholds(config_path,
         When True, make copies of the base configuration files adding the threshold in new filename
     verbose : bool
         Print extra information at run-time.
+<<<<<<< HEAD
     print_only : bool
         Only print verbose information without running anything else.
+=======
+>>>>>>> 38a804b06361fceec46867fc35f591a9918ba607
     """
     confs = AmberConfiguration(rfim=True, rfim_mode='time_domain_sigma_cut')
 
@@ -294,7 +301,7 @@ def create_rfim_configuration_thresholds(config_path,
                     copy_filename
                 ),
                 text_to_search = original_threshold,
-                text_to_replace = new_threshold,\
+                text_to_replace = new_threshold,
                 verbose=verbose
             )
 
