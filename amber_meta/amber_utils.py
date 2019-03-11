@@ -1,14 +1,14 @@
 from __future__ import division, print_function
-import os
+import sys
+from os import path, listdir, walk, makedirs
+from os.path import isfile, join
+import subprocess
 import yaml
 try:
     from filterbank import read_header as filterbank__read_header
     from sigproc import samples_per_file as sigproc__samples_per_file
 except:
     pass
-from os import path, listdir, walk
-from os.path import isfile, join
-from subprocess import run as subprocess__run
 from amber_configuration import AmberConfiguration
 
 """
@@ -153,8 +153,8 @@ def check_directory_exists(directory):
     -------
     directory  : str
     """
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    if not path.exists(directory):
+        makedirs(directory)
     return directory
 
 def list_files_with_paths_recursively(my_path):
@@ -208,7 +208,7 @@ def duplicate_config_file(config_path, base_filename, copy_filename):
         check_path_ends_with_slash(config_path),
         copy_filename
     )
-    subprocess__run('cp', base_file, copy_file)
+    subprocess.Popen(['cp', base_file, copy_file])
 
 def find_replace(filename, text_to_search, text_to_replace, inplace=True):
     """Find text_to_search in filename and replace it with text_to_replace
