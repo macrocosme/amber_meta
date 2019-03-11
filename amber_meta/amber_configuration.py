@@ -25,12 +25,20 @@ class AmberConfiguration:
     ----------
         suffix : str
             Suffix of configuration files (.conf)
+        configurations : dict
+            Configuration built at initialisation
         rfim_config_tdsc_files : list
             List of configuration file names for RFIm's time domain sigma cut
         rfim_config_fdsc_files : list
             List of configuration file names for RFIm's frequency domain sigma cut
         rfim_config_files : dict
             Options to choose between RFIm modes
+        downsampling_configuration : str 
+            'downsampling'
+        integration_steps : str
+            'integration_steps'
+        zapped_channels : str 
+            'zapped_channels'
     """
     suffix = '.conf'
 
