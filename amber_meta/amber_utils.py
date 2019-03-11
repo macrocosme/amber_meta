@@ -4,6 +4,7 @@ from os import path, listdir, walk, makedirs
 from os.path import isfile, join
 import subprocess
 import yaml
+import fileinput
 try:
     from filterbank import read_header as filterbank__read_header
     from sigproc import samples_per_file as sigproc__samples_per_file
