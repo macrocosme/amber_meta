@@ -72,6 +72,9 @@ def get_filterbank_header(input_file, verbose=False):
     Parameters
     ----------
     input_file  : str
+        Input filterbank file
+    verbose : bool
+        Print extra information at run-time.
 
     Returns
     -------
@@ -209,7 +212,7 @@ def duplicate_config_file(config_path, base_filename, copy_filename):
         check_path_ends_with_slash(config_path),
         copy_filename
     )
-    subprocess.Popen(['cp', base_file, copy_file])
+    subprocess.run(['cp', base_file, copy_file])
 
 def find_replace(filename, text_to_search, text_to_replace, inplace=True):
     """Find text_to_search in filename and replace it with text_to_replace
@@ -233,7 +236,9 @@ def create_rfim_configuration_thresholds(config_path,
                                          rfim_mode='time_domain_sigma_cut',
                                          original_threshold='2.50',
                                          new_threshold='1.00',
-                                         duplicate=True):
+                                         duplicate=True,
+                                         verbose=False,
+                                         print_only=False):
     """Create a new RFIm configuration file for specified threshold
 
     Parameters
@@ -248,6 +253,8 @@ def create_rfim_configuration_thresholds(config_path,
         New threshold. Default: 1.00
     duplicate : bool
         When True, make copies of the base configuration files adding the threshold in new filename
+    verbose : bool
+        Print extra information at run-time.
     """
     confs = AmberConfiguration(rfim=True, rfim_mode='time_domain_sigma_cut')
 
@@ -259,24 +266,28 @@ def create_rfim_configuration_thresholds(config_path,
             confs.suffix
         )
 
-        if duplicate:
-            duplicate_config_file(
-                config_path,
-                base_filename = "%s%s" % (
-                    confs.configurations[rfim_mode][option],
-                    confs.suffix
-                ),
-                copy_filename = copy_filename,
-            )
+        if verbose:
+            print (copy_filename)
 
-        find_replace(
-            filename = "%s%s" % (
-                check_path_ends_with_slash(config_path),
-                copy_filename
-            ),
-            text_to_search = original_threshold,
-            text_to_replace = new_threshold
-        )
+        if not print_only:
+            if duplicate:
+                duplicate_config_file(
+                    config_path,
+                    base_filename = "%s%s" % (
+                        confs.configurations[rfim_mode][option],
+                        confs.suffix
+                    ),
+                    copy_filename = copy_filename,
+                )
+
+            find_replace(
+                filename = "%s%s" % (
+                    check_path_ends_with_slash(config_path),
+                    copy_filename
+                ),
+                text_to_search = original_threshold,
+                text_to_replace = new_threshold
+            )
 
 def parse_scenario_to_dictionary(scenario_file):
     """Parse an amber scenario file to a python dictionary
