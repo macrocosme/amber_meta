@@ -8,6 +8,8 @@ except:
     pass
 from os import path, listdir, walk
 from os.path import isfile, join
+from subprocess import run as subprocess__run
+from amber_configuration import AmberConfiguration
 
 """
 .. module:: amber_utils
@@ -185,18 +187,95 @@ def list_files_in_current_path(path):
     """
     return [ f for f in listdir(path) if isfile(join(path,f)) ]
 
-def get_Files(path):
-    """Returns files in the current folder only
+def duplicate_config_file(config_path, base_filename, copy_filename):
+    """Duplicate a configuration file using copu_filename as output nameself.
 
     Parameters
     ----------
-    path  : str
-
-    Returns
-    -------
-    files : list
+    config_path : str
+        Path to configuration files
+    base_filename : str
+        Filename of file to be copied
+    copy_filename : str
+        Filename of duplicate
     """
-    return [ f for f in listdir(path) if isfile(join(path,f)) ]
+    base_file = "%s%s" % (
+        check_path_ends_with_slash(config_path),
+        base_filename
+    )
+
+    copy_file = "%s%s" % (
+        check_path_ends_with_slash(config_path),
+        copy_filename
+    )
+    subprocess__run('cp', base_file, copy_file)
+
+def find_replace(filename, text_to_search, text_to_replace, inplace=True):
+    """Find text_to_search in filename and replace it with text_to_replace
+
+    Parameters
+    ----------
+    filename : str
+        Filename of input file to modify
+    text_to_search : str
+        Text string to be searched in intput file
+    text_to_replace : str
+        Text string to replace text_to_search with in intput file
+    inplace : bool
+        Default: True
+    """
+    i = 0
+    for line in fileinput.input(filename, inplace=inplace):
+        sys.stdout.write(line.replace(text_to_search, text_to_replace))
+
+def create_rfim_configuration_thresholds(config_path,
+                                         rfim_mode='time_domain_sigma_cut',
+                                         original_threshold='2.50',
+                                         new_threshold='1.00',
+                                         duplicate=True):
+    """Create a new RFIm configuration file for specified threshold
+
+    Parameters
+    ----------
+    config_path : str
+        Path to configuration files
+    rfim_mode : str (optional)
+        RFIm mode of operation. Default: 'time_domain_sigma_cut'
+    original_threshold : str (optional)
+        Threshold listed in base config file. Default: 2.50
+    new_threshold : str (optional)
+        New threshold. Default: 1.00
+    duplicate : bool
+        When True, make copies of the base configuration files adding the threshold in new filename
+    """
+    confs = AmberConfiguration(rfim=True, rfim_mode='time_domain_sigma_cut')
+
+    for option in confs.rfim_options[rfim_mode]:
+        copy_filename = "%s%s%s%s" % (
+            confs.configurations[rfim_mode][option],
+            '_threshold_',
+            new_thresholds,
+            confs.suffix
+        )
+
+        if duplicate:
+            duplicate_config_file(
+                config_path,
+                base_filename = "%s%s" % (
+                    confs.configurations[rfim_mode][option],
+                    confs.suffix
+                ),
+                copy_filename = copy_filename,
+            )
+
+        find_replace(
+            filename = "%s%s" % (
+                check_path_ends_with_slash(config_path),
+                copy_filename
+            ),
+            text_to_search = original_threshold,
+            text_to_replace = new_thresholds
+        )
 
 def parse_scenario_to_dictionary(scenario_file):
     """Parse an amber scenario file to a python dictionary

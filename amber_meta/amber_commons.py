@@ -31,10 +31,10 @@ def list_files_in_current_path(path):
     """ Returns files in the current folder only """
     return [ f for f in listdir(path) if isfile(join(path,f)) ]
 
-def find_replace(filename, text_to_search,text_to_replace):
+def find_replace(filename, text_to_search, text_to_replace, inplace=True):
     """ finds text_to_search in filename and replaces it with text_to_replace """
     i = 0
-    for line in fileinput.input(filename, inplace=True):
+    for line in fileinput.input(filename, inplace=inplace):
         sys.stdout.write(line.replace(text_to_search, text_to_replace))
 
 def get_Files(path):

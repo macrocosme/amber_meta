@@ -3,6 +3,7 @@ import os
 import argparse
 import subprocess
 from .amber_options import AmberOptions
+from .amber_configuration import AmberConfiguration
 from .amber_utils import (
     get_full_output_path_and_file,
     get_filterbank_header,
@@ -97,6 +98,8 @@ def create_amber_command(base_name='scenario_3_partitions',
                                  input_data_mode=input_data_mode,
                                  downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
 
+    amber_configs = AmberConfiguration(rfim=rfim, rfim_mode=rfim_mode)
+
     # Check that output directory exists. If not, create it.
     check_directory_exists(output_dir)
 
@@ -107,10 +110,14 @@ def create_amber_command(base_name='scenario_3_partitions',
         # Then try to fill the input, if applicable
         if '_file' in option:
             command.append(config_path + option.split('_file')[0] + '.conf')
-        elif option == 'time_domain_sigma_cut_steps':
-            command.append(config_path + 'tdsc_steps.conf')
-        elif option == 'time_domain_sigma_cut_configuration':
-            command.append(config_path + 'tdsc.conf')
+        elif option in ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']:
+            command.append(
+                "%s%s%s" % (
+                    config_path,
+                    amber_configs.configurations[rfim_mode][option],
+                    amber_configs.suffix
+                )
+            )
         elif option == 'downsampling_configuration':
             command.append(config_path + 'downsampling.conf')
         elif option == 'downsampling':
