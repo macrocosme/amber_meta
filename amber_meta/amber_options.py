@@ -19,7 +19,7 @@ class AmberOptions:
                                      rfim_mode='time_domain_sigma_cut',
                                      snr_mode='snr_mom_sigmacut',
                                      input_data_mode='sigproc',
-                                     downsampling=False
+                                     downsampling=False)
     >>> amber_options.options
 
     Parameters
