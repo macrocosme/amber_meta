@@ -90,15 +90,19 @@ def create_amber_command(base_name='scenario_3_partitions',
     # Get amber's INSTALL_ROOT variable state
     conf_dir_base = os.environ['INSTALL_ROOT']
 
+    downsampling = (int(scenario_dict['downsampling'.upper()]) != 1)
+
     # Pin down amber's to cpu id 'cpu_id'
     command = ['taskset', '-c', str(cpu_id), 'amber']
     amber_options = AmberOptions(rfim=rfim,
                                  rfim_mode=rfim_mode,
                                  snr_mode=snr_mode,
                                  input_data_mode=input_data_mode,
-                                 downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
+                                 downsampling=downsampling)
 
-    amber_configs = AmberConfiguration(rfim=rfim, rfim_mode=rfim_mode)
+    amber_configs = AmberConfiguration(rfim=rfim,
+                                       rfim_mode=rfim_mode,
+                                       downsampling=downsampling)
 
     # Check that output directory exists. If not, create it.
     check_directory_exists(output_dir)
@@ -110,6 +114,8 @@ def create_amber_command(base_name='scenario_3_partitions',
         # Then try to fill the input, if applicable
         if '_file' in option:
             command.append(config_path + option.split('_file')[0] + '.conf')
+        elif option == 'downsampling':
+            pass # Do not pass any option (TODO: fix naming rule issue with downsampling_configuration)
         elif option in ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']:
             command.append(
                 "%s%s%s" % (
@@ -118,16 +124,16 @@ def create_amber_command(base_name='scenario_3_partitions',
                     amber_configs.suffix
                 )
             )
-        elif option == 'downsampling_configuration':
-            command.append(config_path + 'downsampling.conf')
-        elif option == 'downsampling':
-            pass
+        elif option in ['downsampling_configuration', 'integration_steps', 'zapped_channels']:
+            command.append(
+                "%s%s%s" % (
+                    config_path,
+                    amber_configs.configurations[option]
+                    amber_configs.suffix
+                )
+            )
         elif option == 'downsampling_factor':
             command.append(scenario_dict['DOWNSAMPLING'])
-        elif option == 'integration_steps':
-            command.append(config_path + 'integration_steps.conf')
-        elif option == 'zapped_channels':
-            command.append(config_path + 'zapped_channels.conf')
         elif option == 'threshold':
             command.append(str(snrmin))
         elif option == 'data':
@@ -139,7 +145,7 @@ def create_amber_command(base_name='scenario_3_partitions',
                     base_name,
                     root_name=root_name,
                     cpu_id=cpu_id
-                    )
+                )
             )
         elif option == 'header':
             command.append(str(header_size))

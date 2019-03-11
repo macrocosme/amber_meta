@@ -42,13 +42,24 @@ class AmberConfiguration:
         'frequency_domain_sigma_cut': config_fdsc_files
     }
 
-    def __init__(self, rfim=False, rfim_mode='time_domain_sigma_cut')
+    # Downsampling
+    downsampling_configuration = 'downsampling'
+    integration_steps = 'integration_steps'
+    zapped_channels = 'zapped_channels'
+
+    def __init__(self,
+                 rfim=False,
+                 rfim_mode='time_domain_sigma_cut',
+                 downsampling=False)
         self.configurations = {}
         if rfim:
             self.configurations[rfim_mode] = self.rfim_config_files[rfim_mode]
-
-    def get_rfim_confs_list_with_suffixes(rfim_mode):
-        """Get list of configuration files for RFIm with trailing suffixes
+        if downsampling:
+            self.configurations['downsampling_configuration'] = self.downsampling_configuration
+        self.configurations['integration_steps'] = self.integration_steps
+        self.configurations['zapped_channels'] = self.zapped_channels
+    def get_rfim_confs_list(rfim_mode):
+        """Get list of configuration files for RFIm
 
         Parameter
         ---------
@@ -58,18 +69,11 @@ class AmberConfiguration:
         new_confs = []
         for option in self.rfim_options:
             for value in self.configurations[rfim_mode][option]:
-                new_confs.append(
-                    "%s%s" % (
-                        value,
-                        confs.suffix
-                     )
-                 )
+                new_confs.append(value)
          return new_confs
 
-    def get_rfim_confs_list_for_specific_threshold_with_suffixes(rfim_mode, threshold):
+    def get_rfim_confs_list_for_specific_threshold(rfim_mode, threshold):
         """Get list of configuration files for RFIm and specific threshold
-
-        Get list of configuration files for RFIm and specific threshold with trailing suffixes.
 
         Parameter
         ---------
@@ -82,11 +86,10 @@ class AmberConfiguration:
         for option in self.rfim_options:
             for value in self.configurations[rfim_mode][option]:
                 new_confs.append(
-                    "%s%s%s%s" % (
+                    "%s%s%s" % (
                         value,
                         '_threshold_',
-                        threshold,
-                        confs.suffix
+                        threshold
                      )
                  )
          return new_confs
