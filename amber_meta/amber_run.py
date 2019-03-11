@@ -241,7 +241,7 @@ def create_rfim_configuration_thresholds_from_yaml_root(input_file,
     for new_threshold in thresholds:
         for cpu_id in range(base['n_cpu']):
             create_rfim_configuration_thresholds(
-                config_path = config_path='%s%s' % (
+                config_path='%s%s' % (
                     check_path_ends_with_slash(base['base_config_path']),
                     check_path_ends_with_slash(base['config_repositories'][cpu_id]),
                 ),
