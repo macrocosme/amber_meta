@@ -221,7 +221,9 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
 
 def create_rfim_configuration_thresholds_from_yaml_root(input_file,
                                                         root='subband',
-                                                        thresholds = ['2.00', '2.25', '2.75', '3.00']):
+                                                        thresholds = ['2.00', '2.25', '2.75', '3.00'],
+                                                        verbose=False,
+                                                        print_only=False):
     """Create RFIm configuration files from starting with a yaml root
 
     Parameters
@@ -248,7 +250,10 @@ def create_rfim_configuration_thresholds_from_yaml_root(input_file,
                 rfim_mode=base['rfim_mode'],
                 original_threshold='2.50',
                 new_threshold=new_threshold,
-                duplicate=True)
+                duplicate=True,
+                verbose=verbose,
+                print_only=print_only
+            )
 
 def test_amber_run(input_file='data/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    n_cpu=3,
