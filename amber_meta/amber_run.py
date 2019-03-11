@@ -128,7 +128,7 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(
                 "%s%s%s" % (
                     config_path,
-                    amber_configs.configurations[option]
+                    amber_configs.configurations[option],
                     amber_configs.suffix
                 )
             )
