@@ -15,10 +15,10 @@ class AmberOptions:
     parameters as input. All command options will be availble via
     self.options.
 
-    >>> amber_options = AmberOptions(rfim=False,
-                                     rfim_mode='time_domain_sigma_cut',
-                                     snr_mode='snr_mom_sigmacut',
-                                     input_data_mode='sigproc',
+    >>> amber_options = AmberOptions(rfim=False, \
+                                     rfim_mode='time_domain_sigma_cut', \
+                                     snr_mode='snr_mom_sigmacut', \
+                                     input_data_mode='sigproc', \
                                      downsampling=False)
     >>> amber_options.options
     ['print',
