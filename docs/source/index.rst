@@ -68,5 +68,6 @@ License
    amber_run
    amber_utils
    amber_options
+   amber_configuration
    amber_results
    amber_plot

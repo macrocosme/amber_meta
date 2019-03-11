@@ -3,6 +3,7 @@ import os
 import argparse
 import subprocess
 from .amber_options import AmberOptions
+from .amber_configuration import AmberConfiguration
 from .amber_utils import (
     get_full_output_path_and_file,
     get_filterbank_header,
@@ -10,7 +11,8 @@ from .amber_utils import (
     pretty_print_command,
     check_path_ends_with_slash,
     check_directory_exists,
-    parse_scenario_to_dictionary
+    parse_scenario_to_dictionary,
+    create_rfim_configuration_thresholds
 )
 from .amber_results import read_amber_run_results
 
@@ -33,6 +35,7 @@ def create_amber_command(base_name='scenario_3_partitions',
                          config_path='$SOURCE_ROOT/install/scenario_3_partitions_step1/',
                          rfim=True,
                          rfim_mode='time_domain_sigma_cut',
+                         rfim_threshold=None,
                          snr_mode='snr_mom_sigmacut',
                          input_data_mode='sigproc',
                          cpu_id=1,
@@ -58,6 +61,8 @@ def create_amber_command(base_name='scenario_3_partitions',
         Use RFI mitigation or not.
     rfim_mode : str
         RFI mitigation mode. Choices: [time_domain_sigma_cut | frequency_domain_sigma_cut]
+    rfim_threshold : str
+        Override rfim threshold value. Default: None
     snr_mode : str
         SNR mode. Choices: [snr_standard | snr_momad | snr_mom_sigmacut]
     input_data_mode : str
@@ -68,6 +73,8 @@ def create_amber_command(base_name='scenario_3_partitions',
         Minimum SNR for outlier detection.
     output_dir : str
         Output directory.
+    verbose : bool
+        Print extra information at runtime.
     root_name : str
         Root name used for output.
     """
@@ -89,13 +96,19 @@ def create_amber_command(base_name='scenario_3_partitions',
     # Get amber's INSTALL_ROOT variable state
     conf_dir_base = os.environ['INSTALL_ROOT']
 
+    downsampling = (int(scenario_dict['downsampling'.upper()]) != 1)
+
     # Pin down amber's to cpu id 'cpu_id'
     command = ['taskset', '-c', str(cpu_id), 'amber']
     amber_options = AmberOptions(rfim=rfim,
                                  rfim_mode=rfim_mode,
                                  snr_mode=snr_mode,
                                  input_data_mode=input_data_mode,
-                                 downsampling=(int(scenario_dict['downsampling'.upper()]) != 1))
+                                 downsampling=downsampling)
+
+    amber_configs = AmberConfiguration(rfim=rfim,
+                                       rfim_mode=rfim_mode,
+                                       downsampling=downsampling)
 
     # Check that output directory exists. If not, create it.
     check_directory_exists(output_dir)
@@ -107,20 +120,27 @@ def create_amber_command(base_name='scenario_3_partitions',
         # Then try to fill the input, if applicable
         if '_file' in option:
             command.append(config_path + option.split('_file')[0] + '.conf')
-        elif option == 'time_domain_sigma_cut_steps':
-            command.append(config_path + 'tdsc_steps.conf')
-        elif option == 'time_domain_sigma_cut_configuration':
-            command.append(config_path + 'tdsc.conf')
-        elif option == 'downsampling_configuration':
-            command.append(config_path + 'downsampling.conf')
         elif option == 'downsampling':
-            pass
+            pass # Do not pass any option (TODO: fix naming rule issue with downsampling_configuration)
+        elif option in ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']:
+            command.append(
+                "%s%s%s%s" % (
+                    config_path,
+                    amber_configs.configurations[rfim_mode][option],
+                    "" if rfim_threshold in [None, 'None'] else "%s%s" % ('_threshold_', rfim_threshold),
+                    amber_configs.suffix
+                )
+            )
+        elif option in ['downsampling_configuration', 'integration_steps', 'zapped_channels']:
+            command.append(
+                "%s%s%s" % (
+                    config_path,
+                    amber_configs.configurations[option],
+                    amber_configs.suffix
+                )
+            )
         elif option == 'downsampling_factor':
             command.append(scenario_dict['DOWNSAMPLING'])
-        elif option == 'integration_steps':
-            command.append(config_path + 'integration_steps.conf')
-        elif option == 'zapped_channels':
-            command.append(config_path + 'zapped_channels.conf')
         elif option == 'threshold':
             command.append(str(snrmin))
         elif option == 'data':
@@ -132,7 +152,7 @@ def create_amber_command(base_name='scenario_3_partitions',
                     base_name,
                     root_name=root_name,
                     cpu_id=cpu_id
-                    )
+                )
             )
         elif option == 'header':
             command.append(str(header_size))
@@ -188,6 +208,7 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
             ),
             rfim=base['rfim'],
             rfim_mode=base['rfim_mode'],
+            rfim_threshold=base['rfim_threshold'],
             snr_mode=base['snr_mode'],
             input_data_mode=base['input_data_mode'],
             cpu_id=cpu_id,
@@ -203,6 +224,55 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
             # Launch amber, and detach from the process so it runs by itself
             subprocess.Popen(command, preexec_fn=os.setpgrp)
 
+def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root',
+                                                 root='subband',
+                                                 threshold='2.00',
+                                                 verbose=False,
+                                                 print_only=False):
+    run_amber_from_yaml_root(
+        '%s_%s.yaml' % (
+            input_basename,
+            threshold
+        ),
+        verbose=verbose,
+        print_only=print_only
+    )
+
+def create_rfim_configuration_thresholds_from_yaml_root(input_file,
+                                                        root='subband',
+                                                        thresholds = ['2.00', '2.25', '2.75', '3.00'],
+                                                        verbose=False,
+                                                        print_only=False):
+    """Create RFIm configuration files from starting with a yaml root
+
+    Parameters
+    ----------
+    input_file : str
+        Input root yaml file
+    root : str
+        Root value of the yaml file. Default: 'subband'
+    thresholds : list
+        Thresholds files to be generated. Default: ['2.00', '2.25', '2.75', '3.00']
+    """
+    assert input_file.split('.')[-1] in ['yaml', 'yml']
+    base = parse_scenario_to_dictionary(input_file)[root]
+
+    root_name = input_file.split('.')[-2].split('/')[-1]
+
+    for new_threshold in thresholds:
+        for cpu_id in range(base['n_cpu']):
+            create_rfim_configuration_thresholds(
+                config_path='%s%s' % (
+                    check_path_ends_with_slash(base['base_config_path']),
+                    check_path_ends_with_slash(base['config_repositories'][cpu_id]),
+                ),
+                rfim_mode=base['rfim_mode'],
+                original_threshold='2.50',
+                new_threshold=new_threshold,
+                duplicate=True,
+                verbose=verbose,
+                print_only=print_only
+            )
 
 def test_amber_run(input_file='data/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    n_cpu=3,

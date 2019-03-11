@@ -1,7 +1,7 @@
 """
 .. module:: amber_options
    :platform: Unix, Windows
-   :synopsis: Module to run amber
+   :synopsis: Class representing amber's options
 
 .. moduleauthor:: D. Vohl <vohl@astron.nl>
 
