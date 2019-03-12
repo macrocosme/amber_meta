@@ -98,7 +98,7 @@ def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
 
     return df
 
-def run_arts_analysis_triggers(input_yaml_file, root='subband', min_cpu_id=0, max_cpu_id=2, detach=True):
+def run_arts_analysis_triggers(input_yaml_file, root='subband', min_cpu_id=0, max_cpu_id=2, detach=True, verbose=False):
     assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_yaml_file)[root]
     root_name = get_root_name(input_yaml_file)
@@ -112,7 +112,9 @@ def run_arts_analysis_triggers(input_yaml_file, root='subband', min_cpu_id=0, ma
     )
 
     # Get min dm
-    scenario_dict = get_scenario_file_from_root_yaml_base_dict(base, min_cpu_id)
+    scenario_dict = parse_scenario_to_dictionary(
+        get_scenario_file_from_root_yaml_base_dict(base, min_cpu_id)
+    )
     min_dm = scenario_dict['SUBBANDING_DM_FIRST']
 
     trigger_file = "%s%s%s%s%s" % (
@@ -126,7 +128,7 @@ def run_arts_analysis_triggers(input_yaml_file, root='subband', min_cpu_id=0, ma
     output_dir = get_full_output_path_and_file(
         base['output_dir'],
         base['base_name'],
-        root_name=base['root_name']
+        root_name=root_name
     )
 
     '''
@@ -136,10 +138,13 @@ def run_arts_analysis_triggers(input_yaml_file, root='subband', min_cpu_id=0, ma
     '''
     command = ['python', '$ARTS_ANALYSIS_PATH/triggers.py',
                base['input_file'], trigger_file,
-               '--rficlean', '--dm_min', min_dm, '--max_dm', max_dm,
+               '--rficlean', '--dm_min', min_dm, '--dm_max', max_dm,
                '--mk_plot', '--ndm', 1, '--ntime_plot', 250,
                '--outdir', output_dir, 'concat', '--sig_thresh', 8.,
                ' --save_data', 0]
+
+    if verbose:
+        pretty_print_command(command)
 
     # if detach:
     #     subprocess.Popen(command, preexec_fn=os.setpgrp)
