@@ -201,7 +201,7 @@ def run_amber_from_yaml_root(input_yaml_file, root='subband', verbose=False, pri
     for cpu_id in range(base['n_cpu']):
         command = create_amber_command(
             base_name=base['base_name'],
-            input_yaml_file=base['input_yaml_file'],
+            input_file=base['input_file'],
             scenario_file='%s%s%s' % (
                 check_path_ends_with_slash(base['base_scenario_path']),
                 check_path_ends_with_slash(base['base_name']),
