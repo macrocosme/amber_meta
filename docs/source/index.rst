@@ -59,6 +59,7 @@ Example of root yaml file
 -------------------------
 
 .. code-block:: yaml
+
   # AMBER setup for bruteforce dedispersion
   bruteforce:
       input_file: 'path/to/filterbank.fil'
