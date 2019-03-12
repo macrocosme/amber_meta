@@ -7,6 +7,7 @@ from .amber_configuration import AmberConfiguration
 from .amber_utils import (
     get_root_name,
     get_full_output_path_and_file,
+    get_scenario_file_from_root_yaml_base_dict,
     get_filterbank_header,
     get_nbatch,
     pretty_print_command,
@@ -202,11 +203,7 @@ def run_amber_from_yaml_root(input_yaml_file, root='subband', verbose=False, pri
         command = create_amber_command(
             base_name=base['base_name'],
             input_file=base['input_file'],
-            scenario_file='%s%s%s' % (
-                check_path_ends_with_slash(base['base_scenario_path']),
-                check_path_ends_with_slash(base['base_name']),
-                base['scenario_files'][cpu_id],
-            ),
+            scenario_file=get_scenario_file_from_root_yaml_base_dict(base),
             config_path='%s%s' % (
                 check_path_ends_with_slash(base['base_config_path']),
                 check_path_ends_with_slash(base['config_repositories'][cpu_id]),

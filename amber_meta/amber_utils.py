@@ -37,6 +37,33 @@ def get_root_name(input_file):
     """
     return input_file.split('.yaml')[-2].split('/')[-1]
 
+def get_scenario_file_from_root_yaml_base_dict(base, cpu_id=0):
+    """Get the scenario path and file from info in root yaml file
+
+    Parameters
+    ----------
+    base : dict
+        Base dictionary as fetched from parse_scenario_to_dictionary
+    cpu_id : int
+        Index of the step
+
+    Returns
+    -------
+    scenario_file : str
+
+    Usage
+    -----
+    >>> input_yaml_file = 'yaml/root/root.yaml'
+    >>> root='subband'
+    >>> base = parse_scenario_to_dictionary(input_yaml_file)[root]
+    >>> scenario_file = get_scenario_file_from_root_yaml_base_dict(base, cpu_id=0)
+    """
+    return '%s%s%s' % (
+        check_path_ends_with_slash(base['base_scenario_path']),
+        check_path_ends_with_slash(base['base_name']),
+        base['scenario_files'][cpu_id],
+    )
+
 def get_full_output_path_and_file(output_dir, base_name, root_name=None, cpu_id = 0):
     """Get full output path and file name
 

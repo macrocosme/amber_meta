@@ -1,8 +1,13 @@
 from pandas import read_csv as pandas__read_csv
 from .amber_utils import (
     list_files_in_current_path,
-    check_path_ends_with_slash
+    check_path_ends_with_slash,
+    parse_scenario_to_dictionary,
+    get_root_name,
+    get_max_dm,
+    get_scenario_file_from_root_yaml_base_dict
 )
+import subprocess
 
 """
 .. module:: amber_results
@@ -88,3 +93,80 @@ def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
             )
 
     return df
+
+def run_arts_analysis_triggers(input_yaml_file, min_cpu_id=0, max_cpu_id=2, etach=True):
+    assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
+    base = parse_scenario_to_dictionary(input_yaml_file)[root]
+    root_name = get_root_name(input_yaml_file)
+
+    # Get max dm
+    scenario_file=get_scenario_file_from_root_yaml_base_dict(base, max_cpu_id)
+    max_dm = get_max_dm(
+        parse_scenario_to_dictionary(
+            scenario_file
+        )
+    )
+
+    # Get min dm
+    scenario_file=get_scenario_file_from_root_yaml_base_dict(base, min_cpu_id)
+    min_dm = scenario_dict['SUBBANDING_DM_FIRST']
+
+    figure_name = "truth_vs_%s.pdf" % root_name
+
+    trigger_file = "%s%s%s%s%s" % (
+        check_path_ends_with_slash(base['output_dir']),
+        check_path_ends_with_slash(root_name),
+        'combined/',
+        root_name,
+        '.trigger'
+    )
+
+    # python $py_path/triggers.py $fil_file $trigger_file --rficlean --dm_min 5 --dm_max 1500 --mk_plot --ndm 1 --ntime_plot 250 --outdir $output_dir concat  --sig_thresh 8. --save_data 0
+    command = ['python', '$ARTS_ANALYSIS_PATH/triggers.py', base['input_file'], trigger_file,
+               '--rficlean', '--dm_min', min_dm, '--max_dm', max_dm,
+               '--mk_plot', '--ndm', 1, '--ntime_plot', 250, ]
+
+    if detach:
+        subprocess.Popen(command, preexec_fn=os.setpgrp)
+    else:
+        subprocess.call(command)
+
+
+def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
+                                                 figure_name,
+                                                 truth_file=None,
+                                                 root='subband',
+                                                 max_cpu_id=2,
+                                                 detach=True):
+    assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
+    base = parse_scenario_to_dictionary(input_yaml_file)[root]
+    root_name = get_root_name(input_yaml_file)
+    max_dm = get_max_dm(
+        parse_scenario_to_dictionary(
+            get_scenario_file_from_root_yaml_base_dict(base, max_cpu_id)
+        )
+    )
+    figure_name = "truth_vs_%s.pdf" % root_name
+
+    trigger_file = "%s%s%s%s%s" % (
+        check_path_ends_with_slash(base['output_dir']),
+        check_path_ends_with_slash(root_name),
+        'combined/',
+        root_name,
+        '.trigger'
+    )
+    truth_file = "%s%s" % (
+        base['input_file'].split('.fil')[0],
+        '.txt'
+    )
+
+    # python $py_path/tools.py $fntrig $fncand --algo1 Amber$5 --algo2 Heimdall --mk_plot --dm_max 825. --figname $figname --title $title
+    command = ['python', '$ARTS_ANALYSIS_PATH/tools.py', truth_file, trigger_file,
+               '--algo1', 'Truth', '--algo2', root_name,
+               '--make_plot', '--dm_max', max_dm,
+               '--figname', figure_name, '--title', 'Truth vs %s' % root_name]
+
+    if detach:
+        subprocess.Popen(command, preexec_fn=os.setpgrp)
+    else:
+        subprocess.call(command)
