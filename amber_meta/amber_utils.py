@@ -9,7 +9,7 @@ import time
 try:
     from filterbank import read_header as filterbank__read_header
     from sigproc import samples_per_file as sigproc__samples_per_file
-except:
+except ImportError:
     pass
 from .amber_configuration import AmberConfiguration
 
@@ -24,7 +24,7 @@ from .amber_configuration import AmberConfiguration
 """
 
 def get_root_name(input_file):
-    """Get yaml file's root name
+    """Get yaml file's root name.
 
     Parameters
     ----------
@@ -34,11 +34,12 @@ def get_root_name(input_file):
     Returns
     -------
     root_name : str
+
     """
     return input_file.split('.yaml')[-2].split('/')[-1]
 
 def get_scenario_file_from_root_yaml_base_dict(base, cpu_id=0):
-    """Get the scenario path and file from info in root yaml file
+    """Get the scenario path and file from info in root yaml file.
 
     Parameters
     ----------
@@ -64,8 +65,8 @@ def get_scenario_file_from_root_yaml_base_dict(base, cpu_id=0):
         base['scenario_files'][cpu_id],
     )
 
-def get_full_output_path_and_file(output_dir, base_name, root_name=None, cpu_id = 0):
-    """Get full output path and file name
+def get_full_output_path_and_file(output_dir, base_name, root_name=None, cpu_id=None):
+    """Get full output path and file name.
 
     Parameters
     ----------
@@ -76,23 +77,37 @@ def get_full_output_path_and_file(output_dir, base_name, root_name=None, cpu_id 
     Returns
     -------
     path_and_file : str
+
     """
-    return "%s%s%s%s" % (
-        check_directory_exists(
-            check_path_ends_with_slash(
-                '%s%s' % (
-                    check_path_ends_with_slash(output_dir),
-                    root_name if root_name != None else base_name,
+    if cpu_id is not None:
+        return "%s%s%s%s" % (
+            check_directory_exists(
+                check_path_ends_with_slash(
+                    '%s%s' % (
+                        check_path_ends_with_slash(output_dir),
+                        root_name if root_name is not None else base_name,
+                    )
                 )
-            )
-        ),
-        root_name if root_name != None else base_name,
-        '_step_',
-        str(cpu_id + 1)
-    )
+            ),
+            root_name if root_name != None else base_name,
+            '_step_',
+            str(cpu_id + 1)
+        )
+    else:
+        return "%s%s" % (
+            check_directory_exists(
+                check_path_ends_with_slash(
+                    '%s%s' % (
+                        check_path_ends_with_slash(output_dir),
+                        root_name if root_name is not None else base_name,
+                    )
+                )
+            ),
+            root_name if root_name != None else base_name
+        )
 
 def get_max_dm(scenario_dict):
-    """Computes maximum dm.
+    """Compute maximum dm.
 
     Parameters
     ----------
@@ -104,12 +119,13 @@ def get_max_dm(scenario_dict):
     -------
     max_dm : float
         Maximum DM
+
     """
     return float(scenario_dict['SUBBANDING_DM_FIRST']) + \
            float(scenario_dict['SUBBANDING_DM_STEP']) * int(scenario_dict['SUBBANDING_DMS'])
 
 def get_filterbank_header(input_file, verbose=False):
-    """Get header and header_size from filterbank
+    """Get header and header_size from filterbank.
 
     Parameters
     ----------
@@ -124,6 +140,7 @@ def get_filterbank_header(input_file, verbose=False):
         filterbank.read_header.header
     header_size : int
         filterbank.read_header.header_size
+
     """
     header, header_size = filterbank__read_header(input_file)
     if verbose:
@@ -146,10 +163,11 @@ def get_nbatch(input_file, header, header_size, samples, verbose=False):
     returns
     -------
     nbatch : int
+
     """
     if verbose:
-        print ('NBATCH:', sigproc__samples_per_file(input_file, header, header_size)//samples)
-        print ()
+        print('NBATCH:', sigproc__samples_per_file(input_file, header, header_size)//samples)
+        print()
 
     nbatch = sigproc__samples_per_file(input_file, header, header_size)//samples
     return nbatch
@@ -166,8 +184,28 @@ def pretty_print_command (command):
     c = ''
     for v in command:
         c += '%s ' % (v)
-    print ('Command:', c)
-    print ()
+    print(c)
+    print()
+
+def get_list_as_str(command):
+    """Turn command list to pretty print.
+
+    Prints each element of the 'command' list as a string.
+
+    Parameters
+    ----------
+    command : list
+
+    returns
+    -------
+    c : str
+        Prettified command
+
+    """
+    c = ''
+    for v in command:
+        c += '%s ' % (v)
+    return c
 
 def check_path_ends_with_slash(path):
     """Check if directory (string) ends with a slash.
@@ -181,6 +219,7 @@ def check_path_ends_with_slash(path):
     Returns
     -------
     directory : str
+
     """
     if path[-1] != '/':
         path = path + '/'
@@ -198,6 +237,7 @@ def check_directory_exists(directory):
     Returns
     -------
     directory  : str
+
     """
     if not path.exists(directory):
         makedirs(directory)

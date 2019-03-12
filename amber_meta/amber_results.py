@@ -6,7 +6,9 @@ from .amber_utils import (
     get_root_name,
     get_max_dm,
     get_scenario_file_from_root_yaml_base_dict,
-    pretty_print_command
+    pretty_print_command,
+    get_full_output_path_and_file,
+    get_list_as_str
 )
 import subprocess
 import os
@@ -96,13 +98,13 @@ def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
 
     return df
 
-def run_arts_analysis_triggers(input_yaml_file, min_cpu_id=0, max_cpu_id=2, etach=True):
+def run_arts_analysis_triggers(input_yaml_file, root='subband', min_cpu_id=0, max_cpu_id=2, detach=True):
     assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_yaml_file)[root]
     root_name = get_root_name(input_yaml_file)
 
     # Get max dm
-    scenario_file=get_scenario_file_from_root_yaml_base_dict(base, max_cpu_id)
+    scenario_file = get_scenario_file_from_root_yaml_base_dict(base, max_cpu_id)
     max_dm = get_max_dm(
         parse_scenario_to_dictionary(
             scenario_file
@@ -110,10 +112,8 @@ def run_arts_analysis_triggers(input_yaml_file, min_cpu_id=0, max_cpu_id=2, etac
     )
 
     # Get min dm
-    scenario_file=get_scenario_file_from_root_yaml_base_dict(base, min_cpu_id)
+    scenario_dict = get_scenario_file_from_root_yaml_base_dict(base, min_cpu_id)
     min_dm = scenario_dict['SUBBANDING_DM_FIRST']
-
-    figure_name = "truth_vs_%s.pdf" % root_name
 
     trigger_file = "%s%s%s%s%s" % (
         check_path_ends_with_slash(base['output_dir']),
@@ -123,16 +123,32 @@ def run_arts_analysis_triggers(input_yaml_file, min_cpu_id=0, max_cpu_id=2, etac
         '.trigger'
     )
 
-    # python $py_path/triggers.py $fil_file $trigger_file --rficlean --dm_min 5 --dm_max 1500 --mk_plot --ndm 1 --ntime_plot 250 --outdir $output_dir concat  --sig_thresh 8. --save_data 0
-    command = ['python', '$ARTS_ANALYSIS_PATH/triggers.py', base['input_file'], trigger_file,
+    output_dir = get_full_output_path_and_file(
+        base['output_dir'],
+        base['base_name'],
+        root_name=base['root_name']
+    )
+
+    '''
+    python $py_path/triggers.py $fil_file $trigger_file --rficlean --dm_min 5
+            --dm_max 1500 --mk_plot --ndm 1 --ntime_plot 250
+            --outdir $output_dir concat  --sig_thresh 8. --save_data 0
+    '''
+    command = ['python', '$ARTS_ANALYSIS_PATH/triggers.py',
+               base['input_file'], trigger_file,
                '--rficlean', '--dm_min', min_dm, '--max_dm', max_dm,
-               '--mk_plot', '--ndm', 1, '--ntime_plot', 250, ]
+               '--mk_plot', '--ndm', 1, '--ntime_plot', 250,
+               '--outdir', output_dir, 'concat', '--sig_thresh', 8.,
+               ' --save_data', 0]
 
+    # if detach:
+    #     subprocess.Popen(command, preexec_fn=os.setpgrp)
+    # else:
+    #     subprocess.call(command)
     if detach:
-        subprocess.Popen(command, preexec_fn=os.setpgrp)
+        os.system(get_list_as_str(command) + ' &')
     else:
-        subprocess.call(command)
-
+        os.system(get_list_as_str(command))
 
 def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
                                                  truth_file=None,
@@ -171,7 +187,11 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
     if verbose:
         pretty_print_command(command)
 
+    # if detach:
+    #     subprocess.Popen(command, preexec_fn=os.setpgrp)
+    # else:
+    #     subprocess.call(command)
     if detach:
-        subprocess.Popen(command, preexec_fn=os.setpgrp)
+        os.system(get_list_as_str(command) + ' &')
     else:
-        subprocess.call(command)
+        os.system(get_list_as_str(command))
