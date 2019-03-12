@@ -203,7 +203,7 @@ def run_amber_from_yaml_root(input_yaml_file, root='subband', verbose=False, pri
         command = create_amber_command(
             base_name=base['base_name'],
             input_file=base['input_file'],
-            scenario_file=get_scenario_file_from_root_yaml_base_dict(base),
+            scenario_file=get_scenario_file_from_root_yaml_base_dict(base, cpu_id),
             config_path='%s%s' % (
                 check_path_ends_with_slash(base['base_config_path']),
                 check_path_ends_with_slash(base['config_repositories'][cpu_id]),
