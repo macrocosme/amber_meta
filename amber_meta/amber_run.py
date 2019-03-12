@@ -5,6 +5,7 @@ import subprocess
 from .amber_options import AmberOptions
 from .amber_configuration import AmberConfiguration
 from .amber_utils import (
+    get_root_name,
     get_full_output_path_and_file,
     get_filterbank_header,
     get_nbatch,
@@ -185,7 +186,7 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
     assert input_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_file)[root]
 
-    root_name = input_file.split('.')[-2].split('/')[-1]
+    root_name = get_root_name(input_file)
 
     if verbose:
         print('ROOT_NAME', root_name)
@@ -257,7 +258,7 @@ def create_rfim_configuration_thresholds_from_yaml_root(input_file,
     assert input_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_file)[root]
 
-    root_name = input_file.split('.')[-2].split('/')[-1]
+    root_name = get_root_name(input_file)
 
     for new_threshold in thresholds:
         for cpu_id in range(base['n_cpu']):
@@ -361,7 +362,7 @@ def get_amber_run_results_from_root_yaml(input_file, root='subband', verbose=Fal
     """
     assert input_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_file)[root]
-    root_name = input_file.split('.')[-2].split('/')[-1]
+    root_name = get_root_name(input_file)
 
     if verbose:
         print(base)

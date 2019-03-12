@@ -23,6 +23,20 @@ from .amber_configuration import AmberConfiguration
 
 """
 
+def get_root_name(input_file):
+    """Get yaml file's root name
+
+    Parameters
+    ----------
+    input_file : str
+        Yaml input file
+
+    Returns
+    -------
+    root_name : str
+    """
+    return input_file.split('.yaml')[-2].split('/')[-1]
+
 def get_full_output_path_and_file(output_dir, base_name, root_name=None, cpu_id = 0):
     """Get full output path and file name
 
