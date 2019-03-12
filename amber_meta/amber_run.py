@@ -169,14 +169,14 @@ def create_amber_command(base_name='scenario_3_partitions',
     return command
 
 
-def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_only=True, detach_completely=True):
+def run_amber_from_yaml_root(input_yaml_file, root='subband', verbose=False, print_only=True, detach_completely=True):
     """Run amber starting from a yaml root scenario file.
 
     Launches a amber scenario where each step is run as independent sub-processes.
 
     Parameters
     ----------
-    input_file : str
+    input_yaml_file : str
         Input filename with .yaml or .yml extension.
     root : str
         Name of root scenario in input yaml.
@@ -187,10 +187,10 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
     detach_completely : bool
         If True, launch all processes and detach from them. Else, wait on last cpu.
     """
-    assert input_file.split('.')[-1] in ['yaml', 'yml']
-    base = parse_scenario_to_dictionary(input_file)[root]
+    assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
+    base = parse_scenario_to_dictionary(input_yaml_file)[root]
 
-    root_name = get_root_name(input_file)
+    root_name = get_root_name(input_yaml_file)
 
     if verbose:
         print('ROOT_NAME', root_name)
@@ -201,7 +201,7 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
     for cpu_id in range(base['n_cpu']):
         command = create_amber_command(
             base_name=base['base_name'],
-            input_file=base['input_file'],
+            input_yaml_file=base['input_yaml_file'],
             scenario_file='%s%s%s' % (
                 check_path_ends_with_slash(base['base_scenario_path']),
                 check_path_ends_with_slash(base['base_name']),
@@ -258,6 +258,7 @@ def run_amber_from_yaml_root_override_threshold(input_basename='yaml/root/root',
             input_basename,
             threshold
         ),
+        root=root,
         verbose=verbose,
         print_only=print_only,
         detach_completely=True
@@ -287,12 +288,13 @@ def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root'
                 input_basename,
                 threshold
             ),
+            root=root,
             verbose=verbose,
             print_only=print_only,
             detach_completely=False
         )
 
-def create_rfim_configuration_thresholds_from_yaml_root(input_file,
+def create_rfim_configuration_thresholds_from_yaml_root(input_yaml_file,
                                                         root='subband',
                                                         thresholds = ['2.00', '2.25', '2.50', '2.75', '3.00'],
                                                         verbose=False,
@@ -301,17 +303,17 @@ def create_rfim_configuration_thresholds_from_yaml_root(input_file,
 
     Parameters
     ----------
-    input_file : str
+    input_yaml_file : str
         Input root yaml file
     root : str
         Root value of the yaml file. Default: 'subband'
     thresholds : list
         Thresholds files to be generated. Default: ['2.00', '2.25', '2.75', '3.00']
     """
-    assert input_file.split('.')[-1] in ['yaml', 'yml']
-    base = parse_scenario_to_dictionary(input_file)[root]
+    assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
+    base = parse_scenario_to_dictionary(input_yaml_file)[root]
 
-    root_name = get_root_name(input_file)
+    root_name = get_root_name(input_yaml_file)
 
     for new_threshold in thresholds:
         for cpu_id in range(base['n_cpu']):
@@ -399,23 +401,23 @@ def test_amber_run(input_file='data/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
             subprocess.Popen(command, preexec_fn=os.setpgrp)
 
 
-def get_amber_run_results_from_root_yaml(input_file, root='subband', verbose=False):
+def get_amber_run_results_from_root_yaml(input_yaml_file, root='subband', verbose=False):
     """Run amber starting from a yaml root scenario file.
 
     Launches a amber scenario where each step is run as independent sub-processes.
 
     Parameters
     ----------
-    input_file : str
+    input_yaml_file : str
         Accepted format are .yaml and .yml
     root : str
         Name of root scenario in input yaml.
     verbose : bool
         Print extra information at runtime.
     """
-    assert input_file.split('.')[-1] in ['yaml', 'yml']
-    base = parse_scenario_to_dictionary(input_file)[root]
-    root_name = get_root_name(input_file)
+    assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
+    base = parse_scenario_to_dictionary(input_yaml_file)[root]
+    root_name = get_root_name(input_yaml_file)
 
     if verbose:
         print(base)
