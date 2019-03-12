@@ -297,7 +297,7 @@ def create_rfim_configuration_thresholds_from_yaml_root(input_file,
                                                         thresholds = ['2.00', '2.25', '2.50', '2.75', '3.00'],
                                                         verbose=False,
                                                         print_only=False):
-    """Create RFIm configuration files from starting with a yaml root
+    """Create RFIm configuration files starting from with a yaml root
 
     Parameters
     ----------
