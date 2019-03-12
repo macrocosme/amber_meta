@@ -67,4 +67,5 @@ yaml/*
 yml/*
 figures/*
 results/*
+notebooks/*
 *.zip

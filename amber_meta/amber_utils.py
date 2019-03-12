@@ -379,7 +379,7 @@ def parse_yaml_scenario_to_dictionary(scenario_file, scenario_name=None):
     """
     scenario_dict = {}
 
-    with file(scenario_file, 'r') as f:
+    with open(scenario_file, 'r') as f:
         scenario_dict = yaml.load(f)
 
     if scenario_name != None:
