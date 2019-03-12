@@ -182,6 +182,8 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
         Name of root scenario in input yaml.
     verbose : bool
         Print extra information at runtime.
+    print_only : bool
+        Only print command, do not launch them.
     detach_completely : bool
         If True, launch all processes and detach from them. Else, wait on last cpu.
     """
@@ -234,10 +236,23 @@ def run_amber_from_yaml_root(input_file, root='subband', verbose=False, print_on
                     subprocess.call(command)
 
 def run_amber_from_yaml_root_override_threshold(input_basename='yaml/root/root',
-                                                 root='subband',
-                                                 threshold='2.00',
-                                                 verbose=False,
-                                                 print_only=False):
+                                                root='subband',
+                                                threshold='2.00',
+                                                verbose=False,
+                                                print_only=False):
+    """Run amber from a yaml root file and override threshold for RFIm
+
+    input_basename : str
+        Default: 'yaml/root/root'
+    root : str
+        Default: 'subband',
+    threshold : str
+        Default: '2.00'
+    verbose : bool
+        Print extra information at runtime. Default: False.
+    print_only : bool
+        Only print command, do not launch them. Default: False.
+    """
     run_amber_from_yaml_root(
         '%s_%s.yaml' % (
             input_basename,
@@ -253,7 +268,19 @@ def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root'
                                                  thresholds = ['2.00', '2.25', '2.50', '2.75', '3.00'],
                                                  verbose=False,
                                                  print_only=False):
+    """Run amber from a yaml root file and for multiple overriden threshold for RFIm
 
+    input_basename : str
+        Default: 'yaml/root/root'
+    root : str
+        Default: 'subband',
+    thresholds : list
+        Default: ['2.00', '2.25', '2.50', '2.75', '3.00']
+    verbose : bool
+        Print extra information at runtime. Default: False.
+    print_only : bool
+        Only print command, do not launch them. Default: False.
+    """
     for threshold in thresholds:
         run_amber_from_yaml_root(
             '%s_%s.yaml' % (
