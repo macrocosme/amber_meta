@@ -62,9 +62,9 @@ distribute-*.tar.gz
 # Sphinx
 .ropeproject
 
+# Local stuff
 yaml/*
 yml/*
-
 figures/*
-
+results/*
 *.zip
