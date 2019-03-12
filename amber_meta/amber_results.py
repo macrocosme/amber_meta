@@ -5,9 +5,11 @@ from .amber_utils import (
     parse_scenario_to_dictionary,
     get_root_name,
     get_max_dm,
-    get_scenario_file_from_root_yaml_base_dict
+    get_scenario_file_from_root_yaml_base_dict,
+    pretty_print_command
 )
 import subprocess
+import os
 
 """
 .. module:: amber_results
@@ -136,7 +138,8 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
                                                  truth_file=None,
                                                  root='subband',
                                                  max_cpu_id=2,
-                                                 detach=True):
+                                                 detach=True,
+                                                 verbose=True):
     assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_yaml_file)[root]
     root_name = get_root_name(input_yaml_file)
@@ -162,8 +165,11 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
     # python $py_path/tools.py $fntrig $fncand --algo1 Amber$5 --algo2 Heimdall --mk_plot --dm_max 825. --figname $figname --title $title
     command = ['python', '$ARTS_ANALYSIS_PATH/tools.py', truth_file, trigger_file,
                '--algo1', 'Truth', '--algo2', root_name,
-               '--make_plot', '--dm_max', max_dm,
-               '--figname', figure_name, '--title', 'Truth vs %s' % root_name]
+               '--mk_plot', '--dm_max', max_dm,
+               '--figname', figure_name, '--title', "'Truth vs %s'" % root_name]
+
+    if verbose:
+        pretty_print_command(command)
 
     if detach:
         subprocess.Popen(command, preexec_fn=os.setpgrp)

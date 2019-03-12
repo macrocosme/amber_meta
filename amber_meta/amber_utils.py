@@ -105,8 +105,8 @@ def get_max_dm(scenario_dict):
     max_dm : float
         Maximum DM
     """
-    return scenario_dict['SUBBANDING_DM_FIRST'] + \
-           scenario_dict['SUBBANDING_DM_STEP'] * scenario_dict['SUBBANDING_DMS']
+    return float(scenario_dict['SUBBANDING_DM_FIRST']) + \
+           float(scenario_dict['SUBBANDING_DM_STEP']) * int(scenario_dict['SUBBANDING_DMS'])
 
 def get_filterbank_header(input_file, verbose=False):
     """Get header and header_size from filterbank
