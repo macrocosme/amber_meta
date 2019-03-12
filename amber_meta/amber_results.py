@@ -133,7 +133,6 @@ def run_arts_analysis_triggers(input_yaml_file, min_cpu_id=0, max_cpu_id=2, etac
 
 
 def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
-                                                 figure_name,
                                                  truth_file=None,
                                                  root='subband',
                                                  max_cpu_id=2,
