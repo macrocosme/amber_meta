@@ -55,6 +55,57 @@ Else, more advanced usage involves functions not yet added to amber_runs's main.
       output_name='../pairplot.pdf'
     )
 
+Example of root yaml file
+-------------------------
+
+.. code-block:: yaml
+  # AMBER setup for bruteforce dedispersion
+  bruteforce:
+      input_file: 'path/to/filterbank.fil'
+      n_cpu: 1
+      base_name: 'scenario_base_name'
+      base_scenario_path: 'scenario/' # Path where amber scenario files live
+      scenario_files:  ['tuning.sh']
+      snrmin: 8
+      base_config_path: 'configuration/' # Path where amber configuration files live
+      config_repositories: ['scenario_base_name']
+      debug: False
+      rfim: True
+      rfim_mode: 'time_domain_sigma_cut'
+      rfim_threshold: None
+      snr_mode: 'snr_mom_sigmacut'
+      input_data_mode: 'sigproc'
+      output_dir: 'results/'
+      verbose: True
+      print_only: False
+  # AMBER setup for subband dedispersion
+  subband:
+      input_file: 'path/to/filterbank.fil'
+      n_cpu: 3
+      base_name: 'scenario_base_name'
+      base_scenario_path: 'scenario/'
+      scenario_files:  [
+          'tuning_1.sh',
+          'tuning_2.sh',
+          'tuning_3.sh'
+        ]
+      snrmin: 8
+      base_config_path: 'configuration/'
+      config_repositories: [
+          'scenario_base_name_step1',
+          'scenario_base_name_step2',
+          'scenario_base_name_step3'
+        ]
+      debug: False
+      rfim: True
+      rfim_mode: 'time_domain_sigma_cut'
+      rfim_threshold: None
+      snr_mode: 'snr_mom_sigmacut'
+      input_data_mode: 'sigproc'
+      output_dir: 'results/'
+      verbose: True
+      print_only: False
+
 License
 -------
 
