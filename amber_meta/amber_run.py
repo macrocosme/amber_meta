@@ -84,7 +84,6 @@ def create_amber_command(base_name='scenario_3_partitions',
     root_name : str
         Root name used for output.
     """
-
     if verbose:
         print("Scenario:", scenario_file)
         print()
@@ -156,7 +155,7 @@ def create_amber_command(base_name='scenario_3_partitions',
                 get_full_output_path_and_file(
                     output_dir,
                     base_name,
-                    root_name=root_name,
+                    root_name=root_name if rfim_threshold is None else "%s_threshold_%s" % (root_name, rfim_threshold),
                     cpu_id=cpu_id
                 )
             )
