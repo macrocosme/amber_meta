@@ -1,4 +1,5 @@
-from pandas import read_csv as pandas__read_csv
+from pandas import read_csv as pandas__read_csv, DataFrame
+import numpy as np
 from .amber_utils import (
     list_files_in_current_path,
     check_path_ends_with_slash,
@@ -39,8 +40,46 @@ def get_header(filename, sep=' '):
     header : dict
         Filterbank's header
     """
-    with open(filename, 'r') as f:
-        return f.readline().split('\n')[0].split('# ')[1].split(sep)
+    if filename.split('.')[-1] == 'trigger':
+        with open(filename, 'r') as f:
+            return f.readline().split('\n')[0].split('# ')[1].split(sep)
+    elif filename.split('.')[-1] == 'txt':
+        with open(filename, 'r') as f:
+            return f.readline().split('\n')[0].split('# ')[1].split()
+    else:
+        with open(filename, 'r') as f:
+            return f.readline().split('\n')[0].split('# ')[1].split(sep)
+
+def read_injected_txt(injected_txt_dir, injected_txt_file, max_rows=None):
+    """Read amber results from a run.
+
+    Parameters
+    ----------
+    run_output_dir : str
+        Path to output .trigger files
+    extensions : list
+        Desired extension(s) to include. Default: ['.trigger']
+    verbose : bool
+        Print developement information
+    sep  : str
+        Separator
+    Returns
+    -------
+    df : Pandas.DataFrame
+        All results in one dataframe.
+    """
+    full_file_path = "%s%s" % (
+        check_path_ends_with_slash(injected_txt_dir),
+        injected_txt_file
+    )
+
+    # header = get_header(full_file_path)
+    df = DataFrame(
+        np.genfromtxt(full_file_path, max_rows=max_rows),
+        columns=['DM', 'Sigma', 'Time (s)', 'Sample', 'Downfact'] # hardcoded for now...
+    )
+
+    return df
 
 def read_amber_run_results(run_output_dir, extensions=['.trigger'], verbose=False, sep = ' '):
     """Read amber results from a run.
