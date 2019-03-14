@@ -377,6 +377,7 @@ def make_plots_for_rfim_thresholds(input_basename='yaml/root/root',
                                    tools=True,
                                    detach=True,
                                    verbose=True,
+                                   invert_order=False,
                                    print_only=True):
     for sigma in threshold:
         if triggers:
@@ -391,6 +392,7 @@ def make_plots_for_rfim_thresholds(input_basename='yaml/root/root',
                 '%s_%s.yaml' % (input_basename, sigma),
                 detach=detach,
                 verbose=verbose,
+                invert_order=invert_order,
                 print_only=print_only
             )
 
