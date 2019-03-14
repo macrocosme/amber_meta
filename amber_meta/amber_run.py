@@ -302,11 +302,10 @@ def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root'
     """
     for threshold in thresholds:
         run_amber_from_yaml_root(
-            '%s_%s.yaml' % (
-                input_basename,
-                threshold
+            '%s.yaml' % (
+                input_basename
             ),
-            threshold=threshold,
+            rfim_threshold=threshold,
             root=root,
             verbose=verbose,
             print_only=print_only,
