@@ -174,7 +174,7 @@ def create_amber_command(base_name='scenario_3_partitions',
     return command
 
 
-def run_amber_from_yaml_root(input_yaml_file, root='subband', verbose=False, print_only=True, detach_completely=True):
+def run_amber_from_yaml_root(input_yaml_file, root='subband', rfim_threshold=None, verbose=False, print_only=True, detach_completely=True):
     """Run amber starting from a yaml root scenario file.
 
     Launches a amber scenario where each step is run as independent sub-processes.
@@ -203,15 +203,22 @@ def run_amber_from_yaml_root(input_yaml_file, root='subband', verbose=False, pri
     if verbose:
         print(base)
 
-    if 'rfim_threshold' in base:
-        if base['rfim_threshold'] != None:
-            #check_file_exists(base[])
-            # Should check if the file already exists...
-            create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
-                                                               root=root,
-                                                               threshold=base['rfim_threshold'],
-                                                               verbose=verbose,
-                                                               print_only=print_only)
+    if rfim_threshold is None:
+        if 'rfim_threshold' in base:
+            if base['rfim_threshold'] != None:
+                #check_file_exists(base[])
+                # Should check if the file already exists...
+                create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
+                                                                   root=root,
+                                                                   threshold=base['rfim_threshold'],
+                                                                   verbose=verbose,
+                                                                   print_only=print_only)
+    else:
+        create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
+                                                           root=root,
+                                                           threshold=rfim_threshold,
+                                                           verbose=verbose,
+                                                           print_only=print_only)
 
     for cpu_id in range(base['n_cpu']):
         command = create_amber_command(
@@ -224,7 +231,7 @@ def run_amber_from_yaml_root(input_yaml_file, root='subband', verbose=False, pri
             ),
             rfim=base['rfim'],
             rfim_mode=base['rfim_mode'],
-            rfim_threshold=base['rfim_threshold'],
+            rfim_threshold=base['rfim_threshold'] if rfim_threshold is None else rfim_threshold,
             snr_mode=base['snr_mode'],
             input_data_mode=base['input_data_mode'],
             cpu_id=cpu_id,
@@ -299,6 +306,7 @@ def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root'
                 input_basename,
                 threshold
             ),
+            threshold=threshold,
             root=root,
             verbose=verbose,
             print_only=print_only,
