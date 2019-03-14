@@ -275,18 +275,24 @@ def list_files_with_paths_recursively(my_path):
                 my_files.append(dirpath + '/' + f)
     return my_files
 
-def list_files_in_current_path(path):
+def list_files_in_current_path(path, extensions=None):
     """Returns files in the current folder only
 
     Parameters
     ----------
     path  : str
+        Path from where to list files
+    extensions : list
+        List of desired extensions to include. Default: None. Usage example: ['.txt', '.trigger']
 
     Returns
     -------
     files : list
     """
-    return [ f for f in listdir(path) if isfile(join(path,f)) ]
+    if extensions is None:
+        return [ f for f in listdir(path) if isfile(join(path,f)) ]
+    else:
+        return [ f for f in listdir(path) if (f in extensions) and (isfile(join(path,f))) ]
 
 def duplicate_config_file(config_path, base_filename, copy_filename):
     """Duplicate a configuration file using copu_filename as output nameself.

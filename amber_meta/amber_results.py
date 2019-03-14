@@ -81,7 +81,7 @@ def read_amber_run_results(run_output_dir, extensions=['.trigger'], verbose=Fals
 
     # Go through output files
     for file in list_files_in_current_path(run_output_dir)[1:]:
-        if extensions in file:
+        if file in extensions:
             if verbose:
                 print (file)
 
