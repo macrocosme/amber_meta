@@ -42,13 +42,15 @@ def get_header(filename, sep=' '):
     with open(filename, 'r') as f:
         return f.readline().split('\n')[0].split('# ')[1].split(sep)
 
-def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
+def read_amber_run_results(run_output_dir, extensions=['.trigger'], verbose=False, sep = ' '):
     """Read amber results from a run.
 
     Parameters
     ----------
     run_output_dir : str
         Path to output .trigger files
+    extensions : list
+        Desired extension(s) to include. Default: ['.trigger']
     verbose : bool
         Print developement information
     sep  : str
@@ -79,7 +81,7 @@ def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
 
     # Go through output files
     for file in list_files_in_current_path(run_output_dir)[1:]:
-        if '.trigger' in file:
+        if extensions in file:
             if verbose:
                 print (file)
 

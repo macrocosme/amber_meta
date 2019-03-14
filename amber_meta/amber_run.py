@@ -375,13 +375,14 @@ def make_plots_for_rfim_thresholds(threshold=['2.00', '2.50', '3.00', '3.50', '4
                                    triggers=True,
                                    tools=True,
                                    detach=True,
+                                   invert_order=False,
                                    verbose=True,
                                    print_only=True):
     for sigma in threshold:
         if triggers:
             run_arts_analysis_triggers('yaml/root/root_%s.yaml' % sigma, detach=detach, verbose=verbose, print_only=print_only)
         if tools:
-            run_arts_analysis_tools_against_ground_truth('yaml/root/root_%s.yaml' % sigma, detach=detach, verbose=verbose, print_only=print_only)
+            run_arts_analysis_tools_against_ground_truth('yaml/root/root_%s.yaml' % sigma, detach=detach, invert_order=invert_order, verbose=verbose, print_only=print_only)
 
 def test_amber_run(input_file='data/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    n_cpu=3,
