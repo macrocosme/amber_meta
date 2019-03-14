@@ -379,24 +379,26 @@ def create_rfim_configuration_thresholds_from_yaml_root(input_yaml_file,
                                                            print_only=print_only)
 
 def make_plots_for_rfim_thresholds(input_basename='yaml/root/root',
-                                   threshold=['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
+                                   thresholds=['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
                                    triggers=True,
                                    tools=True,
                                    detach=True,
                                    verbose=True,
                                    invert_order=False,
                                    print_only=True):
-    for sigma in threshold:
+    for threshold in thresholds:
         if triggers:
             run_arts_analysis_triggers(
-                '%s_%s.yaml' % (input_basename, sigma),
+                '%s.yaml' % input_basename,
+                threshold=threshold,
                 detach=detach,
                 verbose=verbose,
                 print_only=print_only
             )
         if tools:
             run_arts_analysis_tools_against_ground_truth(
-                '%s_%s.yaml' % (input_basename, sigma),
+                '%s.yaml' % input_basename,
+                threshold=threshold,
                 detach=detach,
                 verbose=verbose,
                 invert_order=invert_order,

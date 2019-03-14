@@ -145,6 +145,7 @@ def run_arts_analysis_triggers(input_yaml_file,
                                root='subband',
                                min_cpu_id=0,
                                max_cpu_id=2,
+                               threshold=None,
                                detach=True,
                                verbose=False,
                                print_only=False):
@@ -152,6 +153,8 @@ def run_arts_analysis_triggers(input_yaml_file,
     assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_yaml_file)[root]
     root_name = get_root_name(input_yaml_file)
+    if threshold is not None:
+        root_name = "%s_threshold_%s" % (root_name, threshold)
 
     # Get max dm
     scenario_file = get_scenario_file_from_root_yaml_base_dict(base, max_cpu_id)
@@ -206,6 +209,7 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
                                                  truth_file=None,
                                                  root='subband',
                                                  max_cpu_id=2,
+                                                 threshold=None,
                                                  detach=True,
                                                  combine=True,
                                                  invert_order=False,
@@ -214,6 +218,9 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
     assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_yaml_file)[root]
     root_name = get_root_name(input_yaml_file)
+    if threshold is not None:
+        root_name = "%s_threshold_%s" % (root_name, threshold)
+
     max_dm = get_max_dm(
         parse_scenario_to_dictionary(
             get_scenario_file_from_root_yaml_base_dict(base, max_cpu_id)
