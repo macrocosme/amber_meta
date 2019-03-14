@@ -207,6 +207,21 @@ def get_list_as_str(command):
         c += '%s ' % (v)
     return c
 
+def check_file_exists(file):
+    """Check if a file exists
+
+    Parameter
+    ---------
+    file : str
+        Filename with path.
+
+    Returns
+    -------
+    response : bool
+        Response to the question "does the file exist?".
+    """
+    return isfile(file)
+
 def check_path_ends_with_slash(path):
     """Check if directory (string) ends with a slash.
 

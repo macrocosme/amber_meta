@@ -155,10 +155,6 @@ def run_arts_analysis_triggers(input_yaml_file,
     if verbose:
         pretty_print_command(command)
 
-    # if detach:
-    #     subprocess.Popen(command, preexec_fn=os.setpgrp)
-    # else:
-    #     subprocess.call(command)
     if not print_only:
         if detach:
             os.system(get_list_as_str(command) + ' &')
@@ -171,6 +167,7 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
                                                  max_cpu_id=2,
                                                  detach=True,
                                                  combine=True,
+                                                 invert_order=False,
                                                  verbose=True,
                                                  print_only=False):
     assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
@@ -192,7 +189,7 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
                 )
             )
         ),
-        "truth_vs_%s.pdf" % root_name
+        "truth_vs_%s.pdf" % root_name if not invert_order else "%s_vs_truth.pdf" % root_name
     )
 
     # Make combined trigger file
@@ -232,24 +229,29 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
         root_name,
         '.trigger'
     )
-    truth_file = "%s%s" % (
-        base['input_file'].split('.fil')[0],
-        '.txt'
-    )
 
-    # python $py_path/tools.py $fntrig $fncand --algo1 Amber$5 --algo2 Heimdall --mk_plot --dm_max 825. --figname $figname --title $title
-    command = ['python', '$ARTS_ANALYSIS_PATH/tools.py', trigger_file, truth_file,
-               '--algo1', root_name, '--algo2', 'Truth',
-               '--mk_plot', '--dm_max', max_dm,
-               '--figname', figure_name, '--title', "'Truth vs %s'" % root_name]
+    if truth_file is None:
+        truth_file = "%s%s" % (
+            base['input_file'].split('.fil')[0],
+            '.txt'
+        )
+
+    # python $py_path/tools.py $fntrig $fncand --algo1 Amber$5 --algo2 Heimdall
+    #   --mk_plot --dm_max 825. --figname $figname --title $title
+    if not invert_order:
+        command = ['python', '$ARTS_ANALYSIS_PATH/tools.py', trigger_file, truth_file,
+                   '--algo1', root_name, '--algo2', 'Truth',
+                   '--mk_plot', '--dm_max', max_dm,
+                   '--figname', figure_name, '--title', "'Truth vs %s'" % root_name]
+    else:
+        command = ['python', '$ARTS_ANALYSIS_PATH/tools.py', truth_file, trigger_file,
+                   '--algo1', 'Truth', '--algo2', root_name,
+                   '--mk_plot', '--dm_max', max_dm,
+                   '--figname', figure_name, '--title', "'%s vs Truth'" % root_name]
 
     if verbose:
         pretty_print_command(command)
 
-    # if detach:
-    #     subprocess.Popen(command, preexec_fn=os.setpgrp)
-    # else:
-    #     subprocess.call(command)
     if not print_only:
         if detach:
             os.system(get_list_as_str(command) + ' &')

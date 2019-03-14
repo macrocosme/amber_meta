@@ -203,6 +203,16 @@ def run_amber_from_yaml_root(input_yaml_file, root='subband', verbose=False, pri
     if verbose:
         print(base)
 
+    if 'rfim_threshold' in base:
+        if base['rfim_threshold'] != None:
+            #check_file_exists(base[])
+            # Should check if the file already exists...
+            create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
+                                                               root=root,
+                                                               threshold=base['rfim_threshold'],
+                                                               verbose=verbose,
+                                                               print_only=print_only)
+
     for cpu_id in range(base['n_cpu']):
         command = create_amber_command(
             base_name=base['base_name'],
@@ -295,6 +305,45 @@ def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root'
             detach_completely=False
         )
 
+def create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
+                                                        root='subband',
+                                                        threshold = '2.50',
+                                                        verbose=False,
+                                                        print_only=False):
+    """Create RFIm configuration file starting from with a yaml root
+
+    Parameters
+    ----------
+    input_yaml_file : str
+        Input root yaml file
+    root : str
+        Root value of the yaml file. Default: 'subband'
+    threshold : list
+        New threshold file to be generated. Default: '2.50',
+    verbose : bool
+        Print extra information at runtime. Default: False.
+    print_only : bool
+        Only print command, do not launch them. Default: False.
+    """
+    assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
+    base = parse_scenario_to_dictionary(input_yaml_file)[root]
+
+    root_name = get_root_name(input_yaml_file)
+
+    for cpu_id in range(base['n_cpu']):
+        create_rfim_configuration_thresholds(
+            config_path='%s%s' % (
+                check_path_ends_with_slash(base['base_config_path']),
+                check_path_ends_with_slash(base['config_repositories'][cpu_id]),
+            ),
+            rfim_mode=base['rfim_mode'],
+            original_threshold='2.50', # This is a bit dumb, but will work for now...
+            new_threshold=threshold,
+            duplicate=True,
+            verbose=verbose,
+            print_only=print_only
+        )
+
 def create_rfim_configuration_thresholds_from_yaml_root(input_yaml_file,
                                                         root='subband',
                                                         thresholds = ['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
@@ -309,27 +358,18 @@ def create_rfim_configuration_thresholds_from_yaml_root(input_yaml_file,
     root : str
         Root value of the yaml file. Default: 'subband'
     thresholds : list
-        Thresholds files to be generated. Default: ['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00']
+        Thresholds files to be generated. Default: ['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
+    verbose : bool
+        Print extra information at runtime. Default: False.
+    print_only : bool
+        Only print command, do not launch them. Default: False.
     """
-    assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
-    base = parse_scenario_to_dictionary(input_yaml_file)[root]
-
-    root_name = get_root_name(input_yaml_file)
-
-    for new_threshold in thresholds:
-        for cpu_id in range(base['n_cpu']):
-            create_rfim_configuration_thresholds(
-                config_path='%s%s' % (
-                    check_path_ends_with_slash(base['base_config_path']),
-                    check_path_ends_with_slash(base['config_repositories'][cpu_id]),
-                ),
-                rfim_mode=base['rfim_mode'],
-                original_threshold='2.50',
-                new_threshold=new_threshold,
-                duplicate=True,
-                verbose=verbose,
-                print_only=print_only
-            )
+    for threshold in thresholds:
+        create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
+                                                           root=root,
+                                                           threshold=threshold,
+                                                           verbose=verbose,
+                                                           print_only=print_only)
 
 def make_plots_for_rfim_thresholds(threshold=['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
                                    triggers=True,
