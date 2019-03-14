@@ -371,18 +371,30 @@ def create_rfim_configuration_thresholds_from_yaml_root(input_yaml_file,
                                                            verbose=verbose,
                                                            print_only=print_only)
 
-def make_plots_for_rfim_thresholds(threshold=['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
+def make_plots_for_rfim_thresholds(input_basename='yaml/root/root',
+                                   threshold=['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
                                    triggers=True,
                                    tools=True,
                                    detach=True,
-                                   invert_order=False,
                                    verbose=True,
+                                   invert_order=False,
                                    print_only=True):
     for sigma in threshold:
         if triggers:
-            run_arts_analysis_triggers('yaml/root/root_%s.yaml' % sigma, detach=detach, verbose=verbose, print_only=print_only)
+            run_arts_analysis_triggers(
+                '%s_%s.yaml' % (input_basename, sigma),
+                detach=detach,
+                verbose=verbose,
+                print_only=print_only
+            )
         if tools:
-            run_arts_analysis_tools_against_ground_truth('yaml/root/root_%s.yaml' % sigma, detach=detach, invert_order=invert_order, verbose=verbose, print_only=print_only)
+            run_arts_analysis_tools_against_ground_truth(
+                '%s_%s.yaml' % (input_basename, sigma),
+                detach=detach,
+                verbose=verbose,
+                invert_order=invert_order,
+                print_only=print_only
+            )
 
 def test_amber_run(input_file='data/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    n_cpu=3,
