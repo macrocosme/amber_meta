@@ -2,6 +2,7 @@ from pandas import read_csv as pandas__read_csv
 from .amber_utils import (
     list_files_in_current_path,
     check_path_ends_with_slash,
+    check_directory_exists,
     parse_scenario_to_dictionary,
     get_root_name,
     get_max_dm,
@@ -12,6 +13,7 @@ from .amber_utils import (
 )
 import subprocess
 import os
+import time
 
 """
 .. module:: amber_results
@@ -98,7 +100,14 @@ def read_amber_run_results(run_output_dir, verbose=False, sep = ' '):
 
     return df
 
-def run_arts_analysis_triggers(input_yaml_file, root='subband', min_cpu_id=0, max_cpu_id=2, detach=True, verbose=False):
+def run_arts_analysis_triggers(input_yaml_file,
+                               root='subband',
+                               min_cpu_id=0,
+                               max_cpu_id=2,
+                               detach=True,
+                               verbose=False,
+                               print_only=False):
+
     assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_yaml_file)[root]
     root_name = get_root_name(input_yaml_file)
@@ -150,17 +159,20 @@ def run_arts_analysis_triggers(input_yaml_file, root='subband', min_cpu_id=0, ma
     #     subprocess.Popen(command, preexec_fn=os.setpgrp)
     # else:
     #     subprocess.call(command)
-    if detach:
-        os.system(get_list_as_str(command) + ' &')
-    else:
-        os.system(get_list_as_str(command))
+    if not print_only:
+        if detach:
+            os.system(get_list_as_str(command) + ' &')
+        else:
+            os.system(get_list_as_str(command))
 
 def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
                                                  truth_file=None,
                                                  root='subband',
                                                  max_cpu_id=2,
                                                  detach=True,
-                                                 verbose=True):
+                                                 combine=True,
+                                                 verbose=True,
+                                                 print_only=False):
     assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_yaml_file)[root]
     root_name = get_root_name(input_yaml_file)
@@ -169,8 +181,50 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
             get_scenario_file_from_root_yaml_base_dict(base, max_cpu_id)
         )
     )
-    figure_name = "truth_vs_%s.pdf" % root_name
 
+    figure_name = "%s%s" % (
+        check_directory_exists(
+            check_path_ends_with_slash(
+                get_full_output_path_and_file(
+                    base['output_dir'],
+                    base['base_name'],
+                    root_name=root_name
+                )
+            )
+        ),
+        "truth_vs_%s.pdf" % root_name
+    )
+
+    # Make combined trigger file
+    combined_repo = check_directory_exists(
+        check_path_ends_with_slash(
+            "%s%s%s" % (
+                check_path_ends_with_slash(base['output_dir']),
+                check_path_ends_with_slash(root_name),
+                'combined/'
+            )
+        )
+    )
+
+    base_output_path = check_directory_exists(
+        check_path_ends_with_slash(
+            '%s%s' % (
+                check_path_ends_with_slash(base['output_dir']),
+                root_name,
+            )
+        )
+    )
+
+    comb_command = ['cat', base_output_path + '*.trigger', '>', combined_repo + root_name + '.trigger']
+
+    if verbose:
+        pretty_print_command(comb_command)
+    if not print_only:
+        os.system(get_list_as_str(comb_command))
+        # Force some waiting in case file hasn't yet been created
+        time.sleep(0.05)
+
+    # Do the rest
     trigger_file = "%s%s%s%s%s" % (
         check_path_ends_with_slash(base['output_dir']),
         check_path_ends_with_slash(root_name),
@@ -184,8 +238,8 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
     )
 
     # python $py_path/tools.py $fntrig $fncand --algo1 Amber$5 --algo2 Heimdall --mk_plot --dm_max 825. --figname $figname --title $title
-    command = ['python', '$ARTS_ANALYSIS_PATH/tools.py', truth_file, trigger_file,
-               '--algo1', 'Truth', '--algo2', root_name,
+    command = ['python', '$ARTS_ANALYSIS_PATH/tools.py', trigger_file, truth_file,
+               '--algo1', root_name, '--algo2', 'Truth',
                '--mk_plot', '--dm_max', max_dm,
                '--figname', figure_name, '--title', "'Truth vs %s'" % root_name]
 
@@ -196,7 +250,8 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
     #     subprocess.Popen(command, preexec_fn=os.setpgrp)
     # else:
     #     subprocess.call(command)
-    if detach:
-        os.system(get_list_as_str(command) + ' &')
-    else:
-        os.system(get_list_as_str(command))
+    if not print_only:
+        if detach:
+            os.system(get_list_as_str(command) + ' &')
+        else:
+            os.system(get_list_as_str(command))

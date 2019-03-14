@@ -16,7 +16,11 @@ from .amber_utils import (
     parse_scenario_to_dictionary,
     create_rfim_configuration_thresholds
 )
-from .amber_results import read_amber_run_results
+from .amber_results import (
+    read_amber_run_results,
+    run_arts_analysis_triggers,
+    run_arts_analysis_tools_against_ground_truth
+)
 
 AMBER_SETUP_PATH = '/home/vohl/AMBER_setup/'
 
@@ -263,7 +267,7 @@ def run_amber_from_yaml_root_override_threshold(input_basename='yaml/root/root',
 
 def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root',
                                                  root='subband',
-                                                 thresholds = ['2.00', '2.25', '2.50', '2.75', '3.00'],
+                                                 thresholds = ['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
                                                  verbose=False,
                                                  print_only=False):
     """Run amber from a yaml root file and for multiple overriden threshold for RFIm
@@ -273,7 +277,7 @@ def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root'
     root : str
         Default: 'subband',
     thresholds : list
-        Default: ['2.00', '2.25', '2.50', '2.75', '3.00']
+        Default: ['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00']
     verbose : bool
         Print extra information at runtime. Default: False.
     print_only : bool
@@ -293,7 +297,7 @@ def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root'
 
 def create_rfim_configuration_thresholds_from_yaml_root(input_yaml_file,
                                                         root='subband',
-                                                        thresholds = ['2.00', '2.25', '2.50', '2.75', '3.00'],
+                                                        thresholds = ['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
                                                         verbose=False,
                                                         print_only=False):
     """Create RFIm configuration files starting from with a yaml root
@@ -305,7 +309,7 @@ def create_rfim_configuration_thresholds_from_yaml_root(input_yaml_file,
     root : str
         Root value of the yaml file. Default: 'subband'
     thresholds : list
-        Thresholds files to be generated. Default: ['2.00', '2.25', '2.75', '3.00']
+        Thresholds files to be generated. Default: ['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00']
     """
     assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_yaml_file)[root]
@@ -326,6 +330,18 @@ def create_rfim_configuration_thresholds_from_yaml_root(input_yaml_file,
                 verbose=verbose,
                 print_only=print_only
             )
+
+def make_plots_for_rfim_thresholds(threshold=['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
+                                   triggers=True,
+                                   tools=True,
+                                   detach=True,
+                                   verbose=True,
+                                   print_only=True):
+    for sigma in threshold:
+        if triggers:
+            run_arts_analysis_triggers('yaml/root/root_%s.yaml' % sigma, detach=detach, verbose=verbose, print_only=print_only)
+        if tools:
+            run_arts_analysis_tools_against_ground_truth('yaml/root/root_%s.yaml' % sigma, detach=detach, verbose=verbose, print_only=print_only)
 
 def test_amber_run(input_file='data/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    n_cpu=3,
