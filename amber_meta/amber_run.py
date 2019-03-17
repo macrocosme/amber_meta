@@ -501,8 +501,10 @@ def get_amber_run_results_from_root_yaml(input_yaml_file, root='subband', verbos
     return read_amber_run_results(full_output_dir, verbose=verbose)
 
 
-def tune_amber(scenario_file='$SOURCE_ROOT/scenario/tuning_step1.sh',
-               config_path='$SOURCE_ROOT/configuration/tuning_step1'):
+def tune_amber(scenario_file='/home/vohl/software/AMBER/scenario/tuning_step1.sh',
+               config_path='/home/vohl/software/AMBER/configuration/tuning_step1',
+               verbose=True,
+               print_only=True):
     """Tune amber.
 
     Tune amber based on a scenario file. The output is save to config_path.
@@ -518,15 +520,21 @@ def tune_amber(scenario_file='$SOURCE_ROOT/scenario/tuning_step1.sh',
     # Define command
     command = [AMBER_SETUP_PATH + 'amber.sh', 'tune', scenario_file, config_path]
 
-    # Launch amber tuning, and detach from the process so it runs by itself
-    subprocess.Popen(command, preexec_fn=os.setpgrp)
-    # os.system([for c in command print (c),][0] + '&' )
+    if verbose:
+        pretty_print_command(command)
+
+    if not print_only:
+        # Launch amber tuning, and detach from the process so it runs by itself
+        subprocess.Popen(command, preexec_fn=os.setpgrp)
+        # os.system([for c in command print (c),][0] + '&' )
 
 
-def test_tune(base_scenario_path='$SOURCE_ROOT/scenario/',
+def test_tune(base_scenario_path='/home/vohl/software/AMBER/scenario/',
               base_name='tuning_halfrate_3GPU_goodcentralfreq',
               scenario_files=['tuning_1.sh', 'tuning_2.sh', 'tuning_3.sh'],
-              config_path='$SOURCE_ROOT/configuration/'):
+              config_path='/home/vohl/software/AMBER/configuration/',
+              verbose=True,
+              print_only=True):
     """Test tuning amber.
 
     Launch tune_amber for three scenarios.
@@ -541,15 +549,18 @@ def test_tune(base_scenario_path='$SOURCE_ROOT/scenario/',
     base_scenario_path = check_path_ends_with_slash(base_scenario_path)
     i = 1
     for file in scenario_files:
-        input_file = base_scenario_path + 'tuning_' + str(i) + '.sh'
+        input_file = "%s%s%s%s%s" % (
+            base_scenario_path,
+            base_name,
+            '/tuning_',
+            i,
+            '.sh'
+        )
         output_dir = config_path + base_name + '_step' + str(i)
-
-        print(i, input_file, output_dir)
-        print()
 
         output_dir = check_directory_exists(output_dir)
 
-        tune_amber(input_file, output_dir)
+        tune_amber(input_file, output_dir, verbose=verbose, print_only=print_only)
         i += 1
 
 
