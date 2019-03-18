@@ -33,11 +33,11 @@ class AmberConfiguration:
             List of configuration file names for RFIm's frequency domain sigma cut
         rfim_config_files : dict
             Options to choose between RFIm modes
-        downsampling_configuration : str 
+        downsampling_configuration : str
             'downsampling'
         integration_steps : str
             'integration_steps'
-        zapped_channels : str 
+        zapped_channels : str
             'zapped_channels'
     """
     suffix = '.conf'
@@ -53,7 +53,10 @@ class AmberConfiguration:
         'time_domain_sigma_cut_configuration': 'tdsc',
         'time_domain_sigma_cut_steps': 'tdsc_steps'
     }
-    rfim_config_fdsc_files = ['fdsc', 'fdsc_steps']
+    rfim_config_fdsc_files = {
+        'frequency_domain_sigma_cut_configuration': 'fdsc',
+        'frequency_domain_sigma_cut_steps': 'fdsc_steps'
+    }
     rfim_config_files = {
         'time_domain_sigma_cut': rfim_config_tdsc_files,
         'frequency_domain_sigma_cut': rfim_config_fdsc_files

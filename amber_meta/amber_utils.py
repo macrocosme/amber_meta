@@ -364,9 +364,11 @@ def create_rfim_configuration_thresholds(config_path,
     print_only : bool
         Only print verbose information without running anything else.
     """
-    confs = AmberConfiguration(rfim=True, rfim_mode='time_domain_sigma_cut')
+    confs = AmberConfiguration(rfim=True, rfim_mode=rfim_mode)
 
     for option in confs.rfim_options[rfim_mode]:
+        if verbose:
+            print(option)
         copy_filename = "%s%s%s%s" % (
             confs.configurations[rfim_mode][option],
             '_threshold_',
@@ -375,7 +377,7 @@ def create_rfim_configuration_thresholds(config_path,
         )
 
         if verbose:
-            print (config_path + copy_filename)
+            print(config_path + copy_filename)
 
         if not print_only:
             if duplicate:

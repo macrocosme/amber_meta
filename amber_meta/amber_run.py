@@ -127,7 +127,7 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(config_path + option.split('_file')[0] + '.conf')
         elif option == 'downsampling':
             pass # Do not pass any option (TODO: fix naming rule issue with downsampling_configuration)
-        elif option in ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']:
+        elif option in ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration', 'frequency_domain_sigma_cut_steps', 'frequency_domain_sigma_cut_configuration']:
             command.append(
                 "%s%s%s%s" % (
                     config_path,
