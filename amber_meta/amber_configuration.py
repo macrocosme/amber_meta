@@ -59,7 +59,9 @@ class AmberConfiguration:
     }
     rfim_config_files = {
         'time_domain_sigma_cut': rfim_config_tdsc_files,
-        'frequency_domain_sigma_cut': rfim_config_fdsc_files
+        'frequency_domain_sigma_cut': rfim_config_fdsc_files,
+        'both__tdsc_fdsc': (rfim_config_tdsc_files, rfim_config_fdsc_files),
+        'both__fdsc_tdsc': (rfim_config_fdsc_files, rfim_config_tdsc_files)
     }
 
     # Downsampling

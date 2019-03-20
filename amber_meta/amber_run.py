@@ -256,7 +256,8 @@ def run_amber_from_yaml_root_override_threshold(input_basename='yaml/root/root',
                                                 root='subband',
                                                 threshold='2.00',
                                                 verbose=False,
-                                                print_only=False):
+                                                print_only=False,
+                                                detach_completely=True):
     """Run amber from a yaml root file and override threshold for RFIm
 
     input_basename : str
@@ -278,14 +279,15 @@ def run_amber_from_yaml_root_override_threshold(input_basename='yaml/root/root',
         root=root,
         verbose=verbose,
         print_only=print_only,
-        detach_completely=True
+        detach_completely=detach_completely
     )
 
 def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root',
                                                  root='subband',
                                                  thresholds = ['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
                                                  verbose=False,
-                                                 print_only=False):
+                                                 print_only=False,
+                                                 detach_completely=False):
     """Run amber from a yaml root file and for multiple overriden threshold for RFIm
 
     input_basename : str
@@ -308,7 +310,7 @@ def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root'
             root=root,
             verbose=verbose,
             print_only=print_only,
-            detach_completely=False
+            detach_completely=detach_completely
         )
 
 def create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
@@ -381,6 +383,9 @@ def make_plots_for_rfim_thresholds(input_basename='yaml/root/root',
                                    thresholds=['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
                                    triggers=True,
                                    tools=True,
+                                   custom_name_base=None,
+                                   truth_file=None,
+                                   truth_name='Truth',
                                    detach=True,
                                    verbose=True,
                                    invert_order=False,
@@ -398,6 +403,9 @@ def make_plots_for_rfim_thresholds(input_basename='yaml/root/root',
             run_arts_analysis_tools_against_ground_truth(
                 '%s.yaml' % input_basename,
                 threshold=threshold,
+                custom_name_base=custom_name_base,
+                truth_file=truth_file,
+                truth_name=truth_name,
                 detach=detach,
                 verbose=verbose,
                 invert_order=invert_order,

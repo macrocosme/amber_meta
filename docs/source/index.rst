@@ -15,6 +15,24 @@ Getting the code
 
     git clone https://github.com/macrocosme/amber_meta.git
     cd amber_meta/
+    pip[3] install -r requirements.txt
+
+Requirements
+----------------
+
+.. code-block:: shell
+
+    ## These can't be pip installed
+    # sigproc
+    # filterbank
+    # http://github.com/liamconnor/arts-analysis
+
+    # pip[3] install -r requirements.txt
+    PyYAML>=3.13
+    matplotlib>=3.0.3
+    pandas>=0.21.1
+    seaborn>=0.9.0
+    sphinx_automodapi>=0.10
 
 Usage
 -----

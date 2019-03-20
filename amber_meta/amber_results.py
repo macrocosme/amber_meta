@@ -206,7 +206,9 @@ def run_arts_analysis_triggers(input_yaml_file,
             os.system(get_list_as_str(command))
 
 def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
+                                                 custom_name_base=None,
                                                  truth_file=None,
+                                                 truth_name='Truth',
                                                  root='subband',
                                                  max_cpu_id=2,
                                                  threshold=None,
@@ -218,8 +220,12 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
     assert input_yaml_file.split('.')[-1] in ['yaml', 'yml']
     base = parse_scenario_to_dictionary(input_yaml_file)[root]
     root_name = get_root_name(input_yaml_file)
+    if custom_name_base is None:
+        custom_name_base = root_name
+
     if threshold is not None:
         root_name = "%s_threshold_%s" % (root_name, threshold)
+        custom_name_base = "%s_threshold_%s" % (custom_name_base, threshold)
 
     max_dm = get_max_dm(
         parse_scenario_to_dictionary(
@@ -237,7 +243,7 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
                 )
             )
         ),
-        "truth_vs_%s.pdf" % root_name if not invert_order else "%s_vs_truth.pdf" % root_name
+        "truth_vs_%s.pdf" % custom_name_base if not invert_order else "%s_vs_truth.pdf" % custom_name_base
     )
 
     # Make combined trigger file
@@ -288,14 +294,14 @@ def run_arts_analysis_tools_against_ground_truth(input_yaml_file,
     #   --mk_plot --dm_max 825. --figname $figname --title $title
     if not invert_order:
         command = ['python', '$ARTS_ANALYSIS_PATH/tools.py', trigger_file, truth_file,
-                   '--algo1', root_name, '--algo2', 'Truth',
+                   '--algo1', custom_name_base, '--algo2', truth_name,
                    '--mk_plot', '--dm_max', max_dm,
-                   '--figname', figure_name, '--title', "'Truth vs %s'" % root_name]
+                   '--figname', figure_name, '--title', "'Truth vs %s'" % custom_name_base]
     else:
         command = ['python', '$ARTS_ANALYSIS_PATH/tools.py', truth_file, trigger_file,
-                   '--algo1', 'Truth', '--algo2', root_name,
+                   '--algo1', truth_name, '--algo2', custom_name_base,
                    '--mk_plot', '--dm_max', max_dm,
-                   '--figname', figure_name, '--title', "'%s vs Truth'" % root_name]
+                   '--figname', figure_name, '--title', "'%s vs Truth'" % custom_name_base]
 
     if verbose:
         pretty_print_command(command)
