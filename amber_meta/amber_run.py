@@ -144,6 +144,8 @@ def create_amber_command(base_name='scenario_3_partitions',
                     amber_configs.suffix
                 )
             )
+        elif option == 'nr_bins':
+            command.append(scenario_dict['RFIM_FDSC_BINS'])
         elif option == 'downsampling_factor':
             command.append(scenario_dict['DOWNSAMPLING'])
         elif option == 'threshold':

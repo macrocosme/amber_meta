@@ -102,7 +102,7 @@ class AmberOptions:
 
     # RFIm
     options_tdsc = ['rfim', 'time_domain_sigma_cut', 'time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']
-    options_fdsc = ['rfim', 'frequency_domain_sigma_cut', 'frequency_domain_sigma_cut_steps', 'frequency_domain_sigma_cut_configuration']
+    options_fdsc = ['rfim', 'nr_bins', 'frequency_domain_sigma_cut', 'frequency_domain_sigma_cut_steps', 'frequency_domain_sigma_cut_configuration']
     options_rfim = {'time_domain_sigma_cut': options_tdsc, 'frequency_domain_sigma_cut': options_fdsc}
 
     # SNR
