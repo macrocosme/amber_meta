@@ -340,8 +340,10 @@ def find_replace(filename, text_to_search, text_to_replace, inplace=True, verbos
 
 def create_rfim_configuration_thresholds(config_path,
                                          rfim_mode='time_domain_sigma_cut',
-                                         original_threshold='2.50',
-                                         new_threshold='1.00',
+                                         original_threshold_tdsc='2.50',
+                                         original_threshold_fdsc='2.50',
+                                         new_threshold_tdsc='3.25',
+                                         new_threshold_fdsc='2.50',
                                          duplicate=True,
                                          verbose=False,
                                          print_only=False):
@@ -373,7 +375,7 @@ def create_rfim_configuration_thresholds(config_path,
         copy_filename = "%s%s%s%s" % (
             confs.configurations[rfim_mode][option],
             '_threshold_',
-            new_threshold,
+            new_threshold_tdsc if "time" in confs.configurations[rfim_mode][option] else new_threshold_fdsc,
             confs.suffix
         )
 
@@ -398,8 +400,8 @@ def create_rfim_configuration_thresholds(config_path,
                     check_path_ends_with_slash(config_path),
                     copy_filename
                 ),
-                text_to_search = original_threshold,
-                text_to_replace = new_threshold,
+                text_to_search = original_threshold_tdsc if "time" in confs.configurations[rfim_mode][option] else original_threshold_fdsc,
+                text_to_replace = new_threshold_tdsc if "time" in confs.configurations[rfim_mode][option] else new_threshold_fdsc,
                 verbose=verbose
             )
 

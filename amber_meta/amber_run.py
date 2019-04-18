@@ -175,7 +175,14 @@ def create_amber_command(base_name='scenario_3_partitions',
     return command
 
 
-def run_amber_from_yaml_root(input_yaml_file, root='subband', rfim_threshold=None, verbose=False, print_only=True, detach_completely=True):
+def run_amber_from_yaml_root(input_yaml_file,
+                             root='subband',
+                             rfim_threshold_override=False,
+                             rfim_threshold_tdsc='3.25',
+                             rfim_threshold_fdsc='2.50',
+                             verbose=False,
+                             print_only=True,
+                             detach_completely=True):
     """Run amber starting from a yaml root scenario file.
 
     Launches a amber scenario where each step is run as independent sub-processes.
@@ -204,20 +211,23 @@ def run_amber_from_yaml_root(input_yaml_file, root='subband', rfim_threshold=Non
     if verbose:
         print(base)
 
-    if rfim_threshold is None:
+    if rfim_threshold_override is None:
         if 'rfim_threshold' in base:
             if base['rfim_threshold'] != None:
                 #check_file_exists(base[])
                 # Should check if the file already exists...
                 create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
                                                                    root=root,
-                                                                   threshold=base['rfim_threshold'],
+                                                                   rfim_threshold_tdsc=base['rfim_threshold_tdsc'],
+                                                                   rfim_threshold_fdsc=base['rfim_threshold_fdsc'],
+                                                                   threshold_=base['rfim_threshold'],
                                                                    verbose=verbose,
                                                                    print_only=print_only)
     else:
         create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
                                                            root=root,
-                                                           threshold=rfim_threshold,
+                                                           rfim_threshold_tdsc=rfim_threshold_tdsc,
+                                                           rfim_threshold_fdsc=rfim_threshold_fdsc,
                                                            verbose=verbose,
                                                            print_only=print_only)
 
@@ -286,7 +296,8 @@ def run_amber_from_yaml_root_override_threshold(input_basename='yaml/root/root',
 
 def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root',
                                                  root='subband',
-                                                 thresholds = ['2.00', '2.50', '3.00', '3.50', '4.00', '4.50', '5.00'],
+                                                 thresholds_tdsc = ['3.25'],
+                                                 thresholds_fdsc = ['2.00', '2.25', '2.50', '2.698', '2.75'],
                                                  verbose=False,
                                                  print_only=False,
                                                  detach_completely=False):
@@ -303,23 +314,26 @@ def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root'
     print_only : bool
         Only print command, do not launch them. Default: False.
     """
-    for threshold in thresholds:
-        run_amber_from_yaml_root(
-            '%s.yaml' % (
-                input_basename
-            ),
-            rfim_threshold=threshold,
-            root=root,
-            verbose=verbose,
-            print_only=print_only,
-            detach_completely=detach_completely
-        )
+    for threshold_tdsc in thresholds_tdsc:
+        for threshold_fdsc in thresholds_fdsc:
+            run_amber_from_yaml_root(
+                '%s.yaml' % (
+                    input_basename
+                ),
+                rfim_threshold_tdsc=threshold_tdsc,
+                rfim_threshold_fdsc=threshold_fdsc,
+                root=root,
+                verbose=verbose,
+                print_only=print_only,
+                detach_completely=detach_completely
+            )
 
 def create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
-                                                        root='subband',
-                                                        threshold = '2.50',
-                                                        verbose=False,
-                                                        print_only=False):
+                                                       root='subband',
+                                                       rfim_threshold_tdsc='3.25',
+                                                       rfim_threshold_fdsc='2.50',
+                                                       verbose=False,
+                                                       print_only=False):
     """Create RFIm configuration file starting from with a yaml root
 
     Parameters
@@ -347,8 +361,10 @@ def create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
                 check_path_ends_with_slash(base['config_repositories'][cpu_id]),
             ),
             rfim_mode=base['rfim_mode'],
-            original_threshold='2.50', # This is a bit dumb, but will work for now...
-            new_threshold=threshold,
+            original_threshold_tdsc='2.50', # This is a bit dumb, but will work for now...
+            original_threshold_fdsc='2.50', # This is a bit dumb, but will work for now...
+            new_threshold_tdsc=rfim_threshold_tdsc,
+            new_threshold_fdsc=rfim_threshold_fdsc,
             duplicate=True,
             verbose=verbose,
             print_only=print_only
