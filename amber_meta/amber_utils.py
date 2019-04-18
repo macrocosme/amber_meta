@@ -366,6 +366,7 @@ def create_rfim_configuration_thresholds(config_path,
     """
     confs = AmberConfiguration(rfim=True, rfim_mode=rfim_mode)
 
+    print(confs.configurations[rfim_mode].keys())
     for option in confs.rfim_options[rfim_mode]:
         if verbose:
             print(option)

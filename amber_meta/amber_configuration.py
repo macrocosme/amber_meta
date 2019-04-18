@@ -45,9 +45,13 @@ class AmberConfiguration:
     # RFIm
     rfim_tdsc_options = ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']
     rfim_fdsc_options = ['frequency_domain_sigma_cut_steps', 'frequency_domain_sigma_cut_configuration']
+    rfim_both__tdsc_fdsc_options = rfim_tdsc_options + rfim_fdsc_options
+    rfim_both__fdsc_tdsc_options = rfim_fdsc_options + rfim_tdsc_options
     rfim_options = {
         'time_domain_sigma_cut': rfim_tdsc_options,
-        'frequency_domain_sigma_cut': rfim_fdsc_options
+        'frequency_domain_sigma_cut': rfim_fdsc_options,
+        'both__tdsc_fdsc': rfim_both__tdsc_fdsc_options,
+        'both__fdsc_tdsc': rfim_both__fdsc_tdsc_options
     }
     rfim_config_tdsc_files = {
         'time_domain_sigma_cut_configuration': 'tdsc',
@@ -57,11 +61,15 @@ class AmberConfiguration:
         'frequency_domain_sigma_cut_configuration': 'fdsc',
         'frequency_domain_sigma_cut_steps': 'fdsc_steps'
     }
+    rfim_config_both__tdsc_fdsc = rfim_config_tdsc_files.copy()
+    rfim_config_both__tdsc_fdsc.update(rfim_config_fdsc_files)
+    rfim_config_both__fdsc_tdsc = rfim_config_fdsc_files.copy()
+    rfim_config_both__fdsc_tdsc.update(rfim_config_tdsc_files)
     rfim_config_files = {
         'time_domain_sigma_cut': rfim_config_tdsc_files,
         'frequency_domain_sigma_cut': rfim_config_fdsc_files,
-        'both__tdsc_fdsc': (rfim_config_tdsc_files, rfim_config_fdsc_files),
-        'both__fdsc_tdsc': (rfim_config_fdsc_files, rfim_config_tdsc_files)
+        'both__tdsc_fdsc': rfim_config_both__tdsc_fdsc,
+        'both__fdsc_tdsc': rfim_config_both__fdsc_tdsc
     }
 
     # Downsampling
