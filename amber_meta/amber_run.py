@@ -41,7 +41,8 @@ def create_amber_command(base_name='scenario_3_partitions',
                          config_path='$SOURCE_ROOT/install/scenario_3_partitions_step1/',
                          rfim=True,
                          rfim_mode='time_domain_sigma_cut',
-                         rfim_threshold=None,
+                         rfim_threshold_tdsc=None,
+                         rfim_threshold_fdsc=None,
                          snr_mode='snr_mom_sigmacut',
                          input_data_mode='sigproc',
                          cpu_id=1,
@@ -127,12 +128,21 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(config_path + option.split('_file')[0] + '.conf')
         elif option == 'downsampling':
             pass # Do not pass any option (TODO: fix naming rule issue with downsampling_configuration)
-        elif option in ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration', 'frequency_domain_sigma_cut_steps', 'frequency_domain_sigma_cut_configuration']:
+        elif option in ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']:
             command.append(
                 "%s%s%s%s" % (
                     config_path,
                     amber_configs.configurations[rfim_mode][option],
-                    "" if rfim_threshold in [None, 'None'] else "%s%s" % ('_threshold_', rfim_threshold),
+                    "" if rfim_threshold_tdsc in [None, 'None'] else "%s%s" % ('_threshold_', rfim_threshold_tdsc),
+                    amber_configs.suffix
+                )
+            )
+        elif option in ['frequency_domain_sigma_cut_steps', 'frequency_domain_sigma_cut_configuration']:
+            command.append(
+                "%s%s%s%s" % (
+                    config_path,
+                    amber_configs.configurations[rfim_mode][option],
+                    "" if rfim_threshold_fdsc in [None, 'None'] else "%s%s" % ('_threshold_', rfim_threshold_fdsc),
                     amber_configs.suffix
                 )
             )
@@ -153,11 +163,23 @@ def create_amber_command(base_name='scenario_3_partitions',
         elif option == 'data':
             command.append(input_file)
         elif option == 'output':
+            if rfim_threshold_tdsc != None and rfim_threshold_fdsc != None:
+                if rfim_mode == "both__tdsc_fdsc":
+                    root_name_str = "%s_thresholds_tdsc_%s_fdsc_%s" % (root_name, rfim_threshold_tdsc, rfim_threshold_fdsc)
+                else:
+                    root_name_str = "%s_thresholds_fdsc_%s_tdsc_%s" % (root_name, rfim_threshold_fdsc, rfim_threshold_tdsc)
+            elif rfim_threshold_tdsc != None:
+                root_name_str = "%s_threshold_%s" % (root_name, rfim_threshold_tdsc)
+            elif rfim_threshold_fdsc != None:
+                root_name_str = "%s_threshold_%s" % (root_name, rfim_threshold_fdsc)
+            else:
+                root_name_str = root_name
+
             command.append(
                 get_full_output_path_and_file(
                     output_dir,
                     base_name,
-                    root_name=root_name if rfim_threshold is None else "%s_threshold_%s" % (root_name, rfim_threshold),
+                    root_name=root_name_str,
                     cpu_id=cpu_id
                 )
             )
@@ -242,7 +264,8 @@ def run_amber_from_yaml_root(input_yaml_file,
             ),
             rfim=base['rfim'],
             rfim_mode=base['rfim_mode'],
-            rfim_threshold=base['rfim_threshold'] if rfim_threshold is None else rfim_threshold,
+            rfim_threshold_tdsc=base['rfim_threshold_tdsc'] if rfim_threshold_tdsc is None else rfim_threshold_tdsc,
+            rfim_threshold_fdsc=base['rfim_threshold_fdsc'] if rfim_threshold_fdsc is None else rfim_threshold_fdsc,
             snr_mode=base['snr_mode'],
             input_data_mode=base['input_data_mode'],
             cpu_id=cpu_id,

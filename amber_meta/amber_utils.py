@@ -58,6 +58,7 @@ def get_scenario_file_from_root_yaml_base_dict(base, cpu_id=0):
     >>> root='subband'
     >>> base = parse_scenario_to_dictionary(input_yaml_file)[root]
     >>> scenario_file = get_scenario_file_from_root_yaml_base_dict(base, cpu_id=0)
+
     """
     return '%s%s%s' % (
         check_path_ends_with_slash(base['base_scenario_path']),
@@ -180,6 +181,7 @@ def pretty_print_command (command):
     Parameters
     ----------
     command : list
+
     """
     c = ''
     for v in command:
@@ -219,6 +221,7 @@ def check_file_exists(file):
     -------
     response : bool
         Response to the question "does the file exist?".
+
     """
     return isfile(file)
 
@@ -267,6 +270,7 @@ def list_files_with_paths_recursively(my_path):
     Parameters
     ----------
     my_path  : str
+
     """
     my_files = []
     for (dirpath, dirnames, filenames) in walk(my_path):
@@ -288,6 +292,7 @@ def list_files_in_current_path(path, extensions=None):
     Returns
     -------
     files : list
+
     """
     if extensions is None:
         return [ f for f in listdir(path) if isfile(join(path,f)) ]
@@ -305,6 +310,7 @@ def duplicate_config_file(config_path, base_filename, copy_filename):
         Filename of file to be copied
     copy_filename : str
         Filename of duplicate
+
     """
     base_file = "%s%s" % (
         check_path_ends_with_slash(config_path),
@@ -331,6 +337,7 @@ def find_replace(filename, text_to_search, text_to_replace, inplace=True, verbos
         Text string to replace text_to_search with in intput file
     inplace : bool
         Default: True
+
     """
     if verbose:
         print ('find_replace:', filename)
@@ -365,6 +372,7 @@ def create_rfim_configuration_thresholds(config_path,
         Print extra information at run-time.
     print_only : bool
         Only print verbose information without running anything else.
+
     """
     confs = AmberConfiguration(rfim=True, rfim_mode=rfim_mode)
 
@@ -420,6 +428,7 @@ def parse_scenario_to_dictionary(scenario_file):
     -------
     scenario_dict : dict
         parsed dictionary
+
     """
     if scenario_file.split('.')[-1] == 'sh':
         scenario_dict = parse_sh_scenario_to_dictionary(scenario_file)
@@ -448,6 +457,7 @@ def parse_sh_scenario_to_dictionary(scenario_file):
     -------
     scenario_dict : dict
         parsed dictionary
+
     """
     scenario_dict = {}
     with open(scenario_file, 'r') as f:
@@ -469,6 +479,7 @@ def parse_yaml_scenario_to_dictionary(scenario_file, scenario_name=None):
     -------
     scenario_dict : dict
         parsed dictionary
+
     """
     scenario_dict = {}
 
