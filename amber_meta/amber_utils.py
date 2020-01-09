@@ -54,6 +54,7 @@ def get_scenario_file_from_root_yaml_base_dict(base, cpu_id=0):
 
     Usage
     -----
+
     >>> input_yaml_file = 'yaml/root/root.yaml'
     >>> root='subband'
     >>> base = parse_scenario_to_dictionary(input_yaml_file)[root]
