@@ -100,6 +100,10 @@ subband:
     print_only: False
 ```
 
+## Issues
+
+If you have any issues with this code, please file an issue on github. Please note that the development branch may be ahead of the master branch, as I am currently a one-man band. 
+
 ## License
 
 This project is Copyright (c) D. Vohl and licensed under
