@@ -375,7 +375,7 @@ def create_rfim_configuration_thresholds(config_path,
         copy_filename = "%s%s%s%s" % (
             confs.configurations[rfim_mode][option],
             '_threshold_',
-            new_threshold_tdsc if "time" in confs.configurations[rfim_mode][option] else new_threshold_fdsc,
+            new_threshold_tdsc if "time" in option else new_threshold_fdsc,
             confs.suffix
         )
 

@@ -41,8 +41,9 @@ def create_amber_command(base_name='scenario_3_partitions',
                          config_path='$SOURCE_ROOT/install/scenario_3_partitions_step1/',
                          rfim=True,
                          rfim_mode='time_domain_sigma_cut',
-                         rfim_threshold=None,
-                         snr_mode='snr_mom_sigmacut',
+                         rfim_threshold_tdsc=None,
+                         rfim_threshold_fdsc=None,
+                         snr_mode='snr_sc',
                          input_data_mode='sigproc',
                          cpu_id=1,
                          snrmin=10,
@@ -70,7 +71,7 @@ def create_amber_command(base_name='scenario_3_partitions',
     rfim_threshold : str
         Override rfim threshold value. Default: None
     snr_mode : str
-        SNR mode. Choices: [snr_standard | snr_momad | snr_mom_sigmacut]
+        SNR mode. Choices: [snr_standard | snr_momad | snr_mom_sigmacut | snr_sc]
     input_data_mode : str
         Input data mode. Choices: [sigproc | data]
     cpu_id : int
@@ -127,12 +128,21 @@ def create_amber_command(base_name='scenario_3_partitions',
             command.append(config_path + option.split('_file')[0] + '.conf')
         elif option == 'downsampling':
             pass # Do not pass any option (TODO: fix naming rule issue with downsampling_configuration)
-        elif option in ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration', 'frequency_domain_sigma_cut_steps', 'frequency_domain_sigma_cut_configuration']:
+        elif option in ['time_domain_sigma_cut_steps', 'time_domain_sigma_cut_configuration']:
             command.append(
                 "%s%s%s%s" % (
                     config_path,
                     amber_configs.configurations[rfim_mode][option],
-                    "" if rfim_threshold in [None, 'None'] else "%s%s" % ('_threshold_', rfim_threshold),
+                    "" if rfim_threshold_tdsc in [None, 'None'] else "%s%s" % ('_threshold_', rfim_threshold_tdsc),
+                    amber_configs.suffix
+                )
+            )
+        elif option in ['frequency_domain_sigma_cut_steps', 'frequency_domain_sigma_cut_configuration']:
+            command.append(
+                "%s%s%s%s" % (
+                    config_path,
+                    amber_configs.configurations[rfim_mode][option],
+                    "" if rfim_threshold_fdsc in [None, 'None'] else "%s%s" % ('_threshold_', rfim_threshold_fdsc),
                     amber_configs.suffix
                 )
             )
@@ -153,11 +163,24 @@ def create_amber_command(base_name='scenario_3_partitions',
         elif option == 'data':
             command.append(input_file)
         elif option == 'output':
+            if rfim_mode == "both__tdsc_fdsc":
+                # Should check and raise error if not valid
+                # if rfim_threshold_tdsc != None and rfim_threshold_fdsc != None:
+                root_name_str = "%s_thresholds_tdsc_%s_fdsc_%s" % (root_name, rfim_threshold_tdsc, rfim_threshold_fdsc)
+            if rfim_mode == "both__fdsc_tdsc":
+                    root_name_str = "%s_thresholds_fdsc_%s_tdsc_%s" % (root_name, rfim_threshold_fdsc, rfim_threshold_tdsc)
+            if rfim_mode == "time_domain_sigma_cut":
+                root_name_str = "%s_threshold_%s" % (root_name, rfim_threshold_tdsc)
+            if rfim_mode == "frequency_domain_sigma_cut":
+                root_name_str = "%s_threshold_%s" % (root_name, rfim_threshold_fdsc)
+            if rfim_mode not in ["both__tdsc_fdsc", "both__fdsc_tdsc", "time_domain_sigma_cut", "frequency_domain_sigma_cut"]:
+                root_name_str = root_name
+
             command.append(
                 get_full_output_path_and_file(
                     output_dir,
                     base_name,
-                    root_name=root_name if rfim_threshold is None else "%s_threshold_%s" % (root_name, rfim_threshold),
+                    root_name=root_name_str,
                     cpu_id=cpu_id
                 )
             )
@@ -179,7 +202,7 @@ def run_amber_from_yaml_root(input_yaml_file,
                              root='subband',
                              rfim_threshold_override=False,
                              rfim_threshold_tdsc='3.25',
-                             rfim_threshold_fdsc='2.50',
+                             rfim_threshold_fdsc='2.75',
                              verbose=False,
                              print_only=True,
                              detach_completely=True):
@@ -211,18 +234,18 @@ def run_amber_from_yaml_root(input_yaml_file,
     if verbose:
         print(base)
 
-    if rfim_threshold_override is None:
-        if 'rfim_threshold' in base:
-            if base['rfim_threshold'] != None:
+    if rfim_threshold_override is False:
+        if 'rfim_threshold_tdsc' in base and 'rfim_threshold_fdsc' in base:
+            if base['rfim_threshold_tdsc'] != None and base['rfim_threshold_fdsc'] != None:
                 #check_file_exists(base[])
                 # Should check if the file already exists...
                 create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
                                                                    root=root,
                                                                    rfim_threshold_tdsc=base['rfim_threshold_tdsc'],
                                                                    rfim_threshold_fdsc=base['rfim_threshold_fdsc'],
-                                                                   threshold_=base['rfim_threshold'],
                                                                    verbose=verbose,
                                                                    print_only=print_only)
+
     else:
         create_rfim_configuration_threshold_from_yaml_root(input_yaml_file,
                                                            root=root,
@@ -242,7 +265,8 @@ def run_amber_from_yaml_root(input_yaml_file,
             ),
             rfim=base['rfim'],
             rfim_mode=base['rfim_mode'],
-            rfim_threshold=base['rfim_threshold'] if rfim_threshold is None else rfim_threshold,
+            rfim_threshold_tdsc=base['rfim_threshold_tdsc'] if rfim_threshold_tdsc is None else rfim_threshold_tdsc,
+            rfim_threshold_fdsc=base['rfim_threshold_fdsc'] if rfim_threshold_fdsc is None else rfim_threshold_fdsc,
             snr_mode=base['snr_mode'],
             input_data_mode=base['input_data_mode'],
             cpu_id=cpu_id,
@@ -266,7 +290,8 @@ def run_amber_from_yaml_root(input_yaml_file,
 
 def run_amber_from_yaml_root_override_threshold(input_basename='yaml/root/root',
                                                 root='subband',
-                                                threshold='2.00',
+                                                rfim_threshold_tdsc='3.25',
+                                                rfim_threshold_fdsc='2.75',
                                                 verbose=False,
                                                 print_only=False,
                                                 detach_completely=True):
@@ -288,6 +313,9 @@ def run_amber_from_yaml_root_override_threshold(input_basename='yaml/root/root',
             input_basename,
             threshold
         ),
+        rfim_threshold_override=True,
+        rfim_threshold_tdsc=rfim_threshold_tdsc,
+        rfim_threshold_fdsc=rfim_threshold_fdsc,
         root=root,
         verbose=verbose,
         print_only=print_only,
@@ -320,6 +348,7 @@ def run_amber_from_yaml_root_override_thresholds(input_basename='yaml/root/root'
                 '%s.yaml' % (
                     input_basename
                 ),
+                rfim_threshold_override=True,
                 rfim_threshold_tdsc=threshold_tdsc,
                 rfim_threshold_fdsc=threshold_fdsc,
                 root=root,
@@ -444,7 +473,7 @@ def test_amber_run(input_file='data/dm100.0_nfrb500_1536_sec_20190214-1542.fil',
                    ],
                    rfim=True,
                    rfim_mode='time_domain_sigma_cut',
-                   snr_mode='snr_mom_sigmacut',
+                   snr_mode='snr_sc',
                    input_data_mode='sigproc',
                    verbose=True,
                    print_only=False):

@@ -111,7 +111,8 @@ class AmberOptions:
     options_snr_standard = ['snr_standard', 'snr_file']
     options_snr_momad = ['snr_momad', 'max_file', 'mom_stepone_file', 'mom_steptwo_file', 'momad_file']
     options_snr_mom_sigmacut = ['snr_mom_sigmacut', 'max_std_file', 'mom_stepone_file', 'mom_steptwo_file']
-    options_SNR = {'snr_standard': options_snr_standard, 'snr_momad': options_snr_momad, 'snr_mom_sigmacut': options_snr_mom_sigmacut}
+    options_snr_sc = ['snr_sc', 'snr_file', 'nsigma', 'correction_factor']
+    options_SNR = {'snr_standard': options_snr_standard, 'snr_momad': options_snr_momad, 'snr_mom_sigmacut': options_snr_mom_sigmacut, 'snr_sc': options_snr_sc}
 
     # Downsampling
     options_downsampling = ['downsampling', 'downsampling_factor', 'downsampling_configuration']
@@ -120,11 +121,12 @@ class AmberOptions:
     options_subband_dedispersion = ['subband_dedispersion', 'dedispersion_stepone_file', 'dedispersion_steptwo_file', 'subbands', 'subbanding_dms', 'subbanding_dm_first', 'subbanding_dm_step']
 
     # Input data
-    options_sigproc = ['sigproc', 'stream', 'header', 'data', 'batches', 'channels', 'min_freq', 'channel_bandwidth', 'samples', 'sampling_time']
+    # options_sigproc = ['sigproc', 'stream', 'header', 'data', 'batches', 'channels', 'min_freq', 'channel_bandwidth', 'samples', 'sampling_time']
+    options_sigproc = ['sigproc', 'stream', 'data', 'batches', 'samples', ]
     options_dada = ['dada', 'dada_key', 'beams', 'synthesized_beams', 'batches']
     options_input_data = {'sigproc': options_sigproc, 'dada': options_dada}
 
-    def __init__(self, rfim=True, rfim_mode='time_domain_sigma_cut', snr_mode='snr_mom_sigmacut', input_data_mode='sigproc', downsampling=False):
+    def __init__(self, rfim=True, rfim_mode='time_domain_sigma_cut', snr_mode='snr_sc', input_data_mode='sigproc', downsampling=False):
         self.options = []
         self.options += self.options_base
         if rfim:
